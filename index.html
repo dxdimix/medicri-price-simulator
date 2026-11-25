@@ -27,10 +27,12 @@
   }
   *{box-sizing:border-box}
   html{scroll-behavior:smooth}
+  html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
   body{margin:0;color:var(--ink);background:var(--bg);font-family:"Noto Sans JP","Hiragino Sans","Yu Gothic",sans-serif;line-height:1.65;-webkit-font-smoothing:antialiased}
   .num-font{font-family:"Inter","Noto Sans JP",sans-serif;font-variant-numeric:tabular-nums;letter-spacing:-.01em}
   button,input,select{font:inherit;color:inherit}
-  .wrap{max-width:1140px;margin:0 auto;padding:0 20px}
+  button,a,label,input{-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+  .wrap{max-width:1140px;margin:0 auto;padding:0 max(20px,env(safe-area-inset-right)) 0 max(20px,env(safe-area-inset-left))}
   :focus-visible{outline:3px solid var(--gold);outline-offset:2px;border-radius:10px}
 
   /* ===== header / hero ===== */
@@ -89,14 +91,14 @@
   .stepper input::-webkit-inner-spin-button{appearance:none}
   .len .unit{font-weight:700;color:var(--sub)}
   .pills{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
-  .pill{border:1px solid var(--line);background:#fff;border-radius:999px;padding:7px 16px;font-size:13.5px;font-weight:500;cursor:pointer;transition:.15s}
-  .pill:hover{border-color:var(--blue);color:var(--blue)}
+  .pill{min-height:44px;border:1px solid var(--line);background:#fff;border-radius:999px;padding:7px 16px;font-size:13.5px;font-weight:500;cursor:pointer;transition:.15s}
+  @media (hover:hover){.pill:hover{border-color:var(--blue);color:var(--blue)}}
   .pill[aria-pressed="true"]{background:var(--navy);border-color:var(--navy);color:#fff}
   .seg{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
   @media (max-width:560px){.seg{grid-template-columns:repeat(3,1fr)}}
   .seg button{border:1px solid var(--line);background:#fff;border-radius:14px;padding:12px 6px;cursor:pointer;transition:.15s;text-align:center}
   .seg button b{display:block;font-size:20px;font-weight:800;color:var(--navy)}
-  .seg button small{font-size:11.5px;color:var(--sub)}
+  .seg button small{font-size:12px;color:var(--sub)}
   .seg button:hover{border-color:var(--blue)}
   .seg button[aria-pressed="true"]{background:var(--brand-grad);border-color:transparent;box-shadow:0 8px 18px rgba(20,88,214,.28)}
   .seg button[aria-pressed="true"] b,.seg button[aria-pressed="true"] small{color:#fff}
@@ -104,7 +106,7 @@
   .meter .bar{position:relative;height:10px;border-radius:99px;background:#dfe6f3;overflow:hidden;margin:8px 0 6px}
   .meter .fill{position:absolute;left:0;top:0;bottom:0;border-radius:99px;background:linear-gradient(90deg,var(--light),var(--cyan));transition:width .35s}
   .meter .over{position:absolute;top:0;bottom:0;background:repeating-linear-gradient(45deg,var(--orange),var(--orange) 6px,#ff9c63 6px,#ff9c63 12px);transition:.35s}
-  .meter .t{display:flex;justify-content:space-between;font-size:12.5px;color:var(--sub)}
+  .meter .t{display:flex;justify-content:space-between;flex-wrap:wrap;gap:2px 12px;font-size:12.5px;color:var(--sub)}
   .meter .msg{font-size:13.5px;font-weight:700}
   .meter .msg.ok{color:var(--light)} .meter .msg.ng{color:var(--orange)}
 
@@ -114,11 +116,11 @@
   .plan{--c:var(--light);--s:var(--light-soft);position:relative;display:flex;flex-direction:column;border:2px solid var(--line);border-radius:18px;padding:18px 16px 16px;cursor:pointer;background:#fff;transition:.2s;text-align:left}
   .plan[data-id="standard"]{--c:var(--std);--s:var(--std-soft)}
   .plan[data-id="premium"]{--c:var(--pre);--s:var(--pre-soft)}
-  .plan:hover{transform:translateY(-3px);box-shadow:var(--shadow-lg)}
+  @media (hover:hover){.plan:hover{transform:translateY(-3px);box-shadow:var(--shadow-lg)}}
   .plan input{position:absolute;opacity:0;pointer-events:none}
   .plan .ic{width:42px;height:42px;border-radius:12px;background:var(--s);color:var(--c);display:grid;place-items:center;margin-bottom:10px}
   .plan .ic svg{width:22px;height:22px}
-  .plan .en{font-size:11px;font-weight:700;letter-spacing:.14em;color:var(--c)}
+  .plan .en{font-size:12px;font-weight:700;letter-spacing:.14em;color:var(--c)}
   .plan .nm{font-size:18px;font-weight:900;line-height:1.3}
   .plan .cc{font-size:12px;color:var(--sub);margin:2px 0 10px;min-height:2.6em}
   .plan .pr{font-size:26px;font-weight:800;color:var(--c);line-height:1.1}
@@ -130,7 +132,7 @@
   .plan .check{position:absolute;top:14px;right:14px;width:24px;height:24px;border-radius:50%;border:2px solid var(--line);display:grid;place-items:center;transition:.2s}
   .plan.sel .check{background:var(--c);border-color:var(--c)}
   .plan.sel .check::after{content:"";width:10px;height:6px;border:solid #fff;border-width:0 0 2.5px 2.5px;transform:rotate(-45deg) translate(1px,-1px)}
-  .badge{position:absolute;top:-12px;left:16px;background:linear-gradient(90deg,var(--orange),#ffa15c);color:#fff;font-size:11.5px;font-weight:700;border-radius:999px;padding:3px 12px;box-shadow:0 6px 14px rgba(255,122,48,.35)}
+  .badge{position:absolute;top:-12px;left:16px;background:linear-gradient(90deg,var(--orange),#ffa15c);color:#fff;font-size:12px;font-weight:700;border-radius:999px;padding:3px 12px;box-shadow:0 6px 14px rgba(255,122,48,.35)}
 
   /* options */
   .ogroup{margin-top:18px}
@@ -156,14 +158,14 @@
   .sw input:checked+span::after{transform:translateX(18px)}
   .sw input:focus-visible+span{outline:3px solid var(--gold);outline-offset:2px}
   .qty{display:flex;align-items:center;gap:4px;margin-top:6px}
-  .qty button{width:26px;height:26px;border-radius:8px;border:1px solid var(--line);background:#fff;cursor:pointer;font-weight:700;color:var(--blue);line-height:1}
+  .qty button{width:36px;height:36px;font-size:18px;border-radius:10px;border:1px solid var(--line);background:#fff;cursor:pointer;font-weight:700;color:var(--blue);line-height:1}
   .qty output{min-width:34px;text-align:center;font-weight:700;font-size:14px}
   .qty[hidden]{display:none}
   .incl{display:flex;gap:10px;align-items:flex-start;margin-top:16px;background:linear-gradient(90deg,var(--pre-soft),var(--std-soft));border-radius:14px;padding:12px 14px;font-size:13px}
   .incl svg{width:20px;height:20px;color:var(--pre);flex:none;margin-top:1px}
 
   /* result */
-  .result{position:sticky;top:16px;border-radius:22px;overflow:hidden;box-shadow:var(--shadow-lg);background:#fff}
+  .result{scroll-margin-top:12px;position:sticky;top:16px;border-radius:22px;overflow:hidden;box-shadow:var(--shadow-lg);background:#fff}
   .r-top{position:relative;overflow:hidden;padding:20px 22px 18px;color:#fff;background:linear-gradient(135deg,#0a2a7a,#0b56d0 55%,#634fcb)}
   .r-top .wmk{position:absolute;right:-14px;top:-10px;width:110px;opacity:.13;pointer-events:none}
   .r-top .k{font-size:12px;letter-spacing:.1em;opacity:.85}
@@ -171,16 +173,17 @@
   .r-total{font-size:36px;font-weight:800;line-height:1.15;margin:8px 0 2px;word-break:keep-all}
   .r-total small{font-size:17px;font-weight:700;opacity:.85}
   .r-total.quote{font-size:26px}
-  .r-tag{display:inline-block;margin-top:6px;font-size:11.5px;background:rgba(255,255,255,.18);border-radius:99px;padding:2px 10px}
+  .r-tag{display:inline-block;margin-top:6px;font-size:12px;background:rgba(255,255,255,.18);border-radius:99px;padding:2px 10px}
   .r-body{padding:16px 22px 20px}
   .lines{list-style:none;margin:0;padding:0;font-size:13.5px}
   .lines li{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid var(--line)}
   .lines li span:last-child{white-space:nowrap;font-weight:700}
   .lines li.base span:first-child{font-weight:700}
   .warn{margin-top:10px;background:var(--orange-soft);color:#8a3b0c;border-radius:10px;padding:8px 12px;font-size:12.5px;display:flex;gap:8px}
-  .note{color:var(--sub);font-size:11.5px;margin:12px 0 0;line-height:1.6}
+  .note{color:var(--sub);font-size:12px;margin:12px 0 0;line-height:1.6}
   .cta{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;border:0;border-radius:14px;padding:13px;font-weight:700;font-size:15px;cursor:pointer;margin-top:14px;color:#fff;background:linear-gradient(90deg,var(--orange),#ff9a52);box-shadow:0 10px 22px rgba(255,122,48,.35);transition:.15s}
-  .cta:hover{transform:translateY(-1px);box-shadow:0 14px 26px rgba(255,122,48,.42)}
+  @media (hover:hover){.cta:hover{transform:translateY(-1px);box-shadow:0 14px 26px rgba(255,122,48,.42)}}
+  .cta:active,.sub-btn:active,.pill:active,.seg button:active{transform:scale(.97)}
   .cta svg{width:18px;height:18px}
   .sub-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;border:1.5px solid var(--line);background:#fff;border-radius:14px;padding:11px;font-weight:700;font-size:14px;cursor:pointer;margin-top:10px;color:var(--navy)}
   .sub-btn:hover{border-color:var(--blue);color:var(--blue)}
@@ -192,9 +195,11 @@
   @media (max-width:960px){
     .result{position:static}
     .mbar{display:flex;position:fixed;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom));z-index:20;border-radius:18px;padding:10px 12px 10px 18px;align-items:center;justify-content:space-between;gap:10px;color:#fff;background:linear-gradient(135deg,#0a2a7a,#0b56d0 60%,#634fcb);box-shadow:0 14px 30px rgba(11,42,111,.35)}
-    .mbar .k{font-size:11px;opacity:.8}
+    .mbar .k{font-size:12px;opacity:.85}
     .mbar .v{font-weight:800;font-size:19px;line-height:1.2}
-    .mbar a{background:#fff;color:var(--navy);text-decoration:none;font-weight:700;font-size:13px;border-radius:12px;padding:9px 14px;white-space:nowrap}
+    .mbar{transition:transform .25s,opacity .25s}
+    .mbar.hide{transform:translateY(140%);opacity:0;pointer-events:none}
+    .mbar a{min-height:44px;display:inline-flex;align-items:center;background:#fff;color:var(--navy);text-decoration:none;font-weight:700;font-size:13px;border-radius:12px;padding:9px 14px;white-space:nowrap}
     body{padding-bottom:96px}
   }
 
@@ -216,7 +221,7 @@
   .dl-body h3:first-child{margin-top:0}
   .tbl{overflow-x:auto;border:1px solid var(--line);border-radius:14px}
   table{border-collapse:collapse;width:100%;font-size:13.5px;min-width:560px}
-  .two table{min-width:0}
+  .two table,table.kv{min-width:0}
   th,td{padding:11px 12px;text-align:center;border-bottom:1px solid var(--line)}
   tr:last-child td{border-bottom:0}
   thead th{background:#f0f4fb;font-weight:700;font-size:13px}
@@ -227,13 +232,92 @@
   tr.std td{background:var(--std-soft)} tr.std td.c30{background:#dfe9ff}
   tr.std td.p,tr.std .pn{color:var(--blue)}
   .pn{font-weight:800}
-  .rb{display:inline-block;margin-left:6px;font-size:10.5px;color:#fff;background:var(--orange);border-radius:99px;padding:1px 8px;vertical-align:2px}
+  .rb{display:inline-block;margin-left:6px;font-size:12px;color:#fff;background:var(--orange);border-radius:99px;padding:1px 8px;vertical-align:2px}
   .two{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start}
   @media (max-width:720px){.two{grid-template-columns:1fr}}
   .stack{display:grid;gap:14px}
   .gh th{background:#f0f4fb;text-align:left}
   .dl-body ul{margin:0;padding-left:1.2em;font-size:13.5px;display:grid;gap:4px}
   .dl-note{font-size:12.5px;color:var(--sub);margin:10px 0 0}
+
+  /* ===== スマホ最適化 ===== */
+  @media (max-width:600px){
+    .topbar{padding:12px 0}
+    .btn-ghost{padding:10px 14px;font-size:13px;min-height:44px}
+    .hero-body{padding:8px 0 64px;gap:0}
+    .hero h1{font-size:24px;margin:12px 0 8px;line-height:1.4;word-break:keep-all}
+    .hero p.lead{font-size:14px}
+    .eyebrow{font-size:12px;padding:4px 10px}
+    .brand{min-height:44px}
+    .feats{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;margin:16px -20px 0;padding:0 20px 2px;scroll-snap-type:x proximity}
+    .feats::-webkit-scrollbar{display:none}
+    .feat{flex:none;font-size:12.5px;padding:7px 11px;scroll-snap-align:start}
+    .byd{margin-top:12px}
+    .hero-card{display:none}
+    main{margin-top:-44px}
+    .panel{padding:18px 16px;border-radius:16px;margin-bottom:14px}
+    .step-h{gap:10px;margin-bottom:14px}
+    .step-n{width:32px;height:32px;border-radius:10px;font-size:15px}
+    .step-h h2{font-size:16px;line-height:1.4}
+    .step-h p{font-size:12px}
+    .len{gap:10px}
+    .stepper{flex:1;justify-content:space-between}
+    .stepper button{width:52px;height:52px}
+    .stepper input{flex:1;min-width:0;font-size:32px}
+    .pills{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+    .pill{padding:6px 0;font-size:13.5px;text-align:center}
+    .seg{grid-template-columns:repeat(5,1fr);gap:6px}
+    .seg button{padding:10px 2px;border-radius:12px;min-height:60px}
+    .seg button b{font-size:18px}
+    .seg button small{font-size:12px}
+    .meter{padding:12px}
+    .meter .msg{font-size:13px;line-height:1.5}
+    .plans{gap:12px}
+    .plan{display:grid;grid-template-columns:auto 1fr;column-gap:12px;padding:16px 14px 14px}
+    .plan .ic{grid-row:1 / span 2;margin:0;width:40px;height:40px}
+    .plan .en{grid-column:2}
+    .plan .nm{grid-column:2;font-size:17px}
+    .plan .cc{display:none}
+    .plan .pr{grid-column:1 / -1;margin-top:8px;font-size:24px}
+    .plan ul{grid-column:1 / -1;grid-template-columns:1fr;gap:3px;font-size:13px;margin-top:10px;padding-top:10px}
+    .plan .check{top:16px;right:14px}
+    .otiles{gap:8px}
+    .ot{padding:12px;gap:10px;min-height:64px}
+    .ot .oi{width:36px;height:36px}
+    .ot .nm{font-size:14px}
+    .sw{width:48px;height:28px}
+    .sw span::after{width:22px;height:22px}
+    .sw input:checked+span::after{transform:translateX(20px)}
+    .incl{font-size:12.5px}
+    .r-top{padding:18px 18px 16px}
+    .r-total{font-size:30px}
+    .r-body{padding:14px 18px 18px}
+    .lines{font-size:13px}
+    .cta,.sub-btn{min-height:50px}
+    footer .wrap{flex-direction:column;align-items:flex-start}
+    footer .fl img{height:40px}
+    /* 料金一覧は全画面シートで表示 */
+    dialog{width:100vw;max-width:100vw;height:100%;max-height:100%;margin:0;border-radius:0}
+    dialog[open]{display:flex;flex-direction:column}
+    .dl-head{padding:14px 16px calc(14px);padding-top:max(14px,env(safe-area-inset-top))}
+    .dl-body{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:16px 14px calc(24px + env(safe-area-inset-bottom))}
+    table{min-width:0;font-size:12.5px}
+    th,td{padding:10px 5px}
+    td.p{font-size:12.5px;letter-spacing:-.02em}
+    .hide-sp{display:none}
+    .tbl td.l .rb{display:block;margin:2px 0 0;width:max-content}
+    .dl-body ul{font-size:13px}
+  }
+  @media (max-width:360px){
+    .hero h1{font-size:22px}
+    .seg button b{font-size:16px}
+  }
+  @media (max-height:500px) and (orientation:landscape){
+    .hero-card{display:none}
+    .hero-body{grid-template-columns:1fr;padding:8px 0 64px}
+    .hero h1{font-size:26px}
+    .feats,.hero p.lead{display:none}
+  }
   @media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
 </style>
 </head>
@@ -279,7 +363,7 @@
   <div class="grid">
     <div>
       <section class="panel" aria-labelledby="h1s">
-        <div class="step-h"><span class="step-n">1</span><div><h2 id="h1s">元の動画（撮影した素材）の長さ</h2><p>複数のファイルがある場合は合計の長さ</p></div></div>
+        <div class="step-h"><span class="step-n">1</span><div><h2 id="h1s">元の動画の長さ</h2><p>撮影した素材の長さ（複数ある場合は合計）</p></div></div>
         <div class="len">
           <div class="stepper">
             <button type="button" id="rawMinus" aria-label="10分減らす">−</button>
@@ -582,15 +666,16 @@ $("copyBtn").onclick=async()=>{
 /* ---- 料金一覧 ---- */
 function buildList(){
   const adds={light:"基本料金", standard:"＋カット・フルテロップ", premium:"＋図解・演出"};
-  const head=`<thead><tr><th class="l">プラン</th><th>内容</th>${TIERS.map(t=>`<th class="${t===30?'c30':''}">${t}分</th>`).join("")}</tr></thead>`;
-  const body=PLANS.map(p=>`<tr class="${p.recommend?'std':''}"><td class="l"><span class="pn">${p.name}</span>${p.recommend?'<span class="rb">おすすめ</span>':''}</td><td>${adds[p.id]}</td>${p.prices.map((v,i)=>`<td class="p num-font ${TIERS[i]===30?'c30':''}">${yen(v)}</td>`).join("")}</tr>`).join("");
+  const head=`<thead><tr><th class="l">プラン</th><th class="hide-sp">内容</th>${TIERS.map(t=>`<th class="${t===30?'c30':''}">${t}分</th>`).join("")}</tr></thead>`;
+  const body=PLANS.map(p=>`<tr class="${p.recommend?'std':''}"><td class="l"><span class="pn">${p.name}</span>${p.recommend?'<span class="rb">おすすめ</span>':''}</td><td class="hide-sp">${adds[p.id]}</td>${p.prices.map((v,i)=>`<td class="p num-font ${TIERS[i]===30?'c30':''}">${yen(v)}</td>`).join("")}</tr>`).join("");
   const groups=[]; OPTIONS.forEach(o=>{ if(o.group) groups.push({h:o.group,items:[]}); else groups[groups.length-1].items.push(o); });
   const optTable=g=>`<div class="tbl gh"><table><thead><tr><th colspan="2">${g.h}</th></tr></thead><tbody>${g.items.map(o=>`<tr><td class="l">${o.name}</td><td class="r">${o.id==="revise"?"¥3,000／回":o.label}</td></tr>`).join("")}${g.h==="割増・追加料金"?'<tr><td class="l">元素材の超過分（完成動画の1.5倍超）</td><td class="r">¥5,000／30分〜</td></tr>':''}</tbody></table></div>`;
   $("listBody").innerHTML=`
     <h3>基本料金（完成動画の長さ別）</h3>
-    <div class="tbl"><table>${head}<tbody>${body}
-      <tr><td class="l" colspan="2">撮影を含む動画制作</td><td colspan="4">個別見積もり</td></tr>
-      <tr><td class="l" colspan="2">60分を超える動画・特殊な編集</td><td colspan="4">個別見積もり</td></tr></tbody></table></div>
+    <div class="tbl"><table>${head}<tbody>${body}</tbody></table></div>
+    <div class="tbl" style="margin-top:10px"><table class="kv"><tbody>
+      <tr><td class="l">撮影を含む動画制作</td><td class="r">個別見積もり</td></tr>
+      <tr><td class="l">60分を超える動画・特殊な編集</td><td class="r">個別見積もり</td></tr></tbody></table></div>
     <h3>オプション（めやす）</h3>
     <div class="two"><div class="stack">${optTable(groups[0])}${optTable(groups[2])}</div><div class="stack">${optTable(groups[1])}</div></div>
     <p class="dl-note">フルテロップはスタンダード以上、オリジナル図解・イラスト作成とPowerPointなどの資料挿入はプレミアムに含まれます。</p>
@@ -614,8 +699,14 @@ dlg.addEventListener("click",e=>{ if(e.target===dlg) closeList(); });
 document.querySelectorAll("[data-open-list]").forEach(b=>b.onclick=openList);
 $("closeList").onclick=closeList;
 
+/* スマホ：内訳が画面に見えている間は下の合計バーを隠す */
+if("IntersectionObserver" in window){
+  const mb=document.querySelector(".mbar");
+  new IntersectionObserver(es=>es.forEach(e=>mb.classList.toggle("hide", e.isIntersecting)),{threshold:0.15}).observe($("result"));
+}
 setRaw(60);
 if(location.hash==="#prices") openList();
+window.addEventListener("hashchange",()=>{ if(location.hash==="#prices" && !dlg.open) openList(); });
 </script>
 </body>
 </html>
