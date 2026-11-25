@@ -2,247 +2,418 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>メディクリ 動画編集 料金シミュレーター</title>
-<meta name="description" content="メディクリ（DimiX）の動画編集の料金を、元の動画の長さとプラン・オプションから概算できます。">
-<link rel="icon" href="logo_medicri.png">
+<meta name="description" content="メディクリ（DimiX）の動画編集料金を、元の動画の長さ・プラン・オプションから約30秒で概算できます。">
+<meta property="og:title" content="メディクリ 動画編集 料金シミュレーター">
+<meta property="og:description" content="見やすく、わかりやすく、伝わる動画へ。動画編集の料金を約30秒で概算。">
+<meta property="og:image" content="assets/medicri_wordmark.png">
+<meta name="theme-color" content="#0b2a6f">
+<link rel="icon" href="assets/favicon.png">
+<link rel="apple-touch-icon" href="assets/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Inter:wght@600;700;800&display=swap" rel="stylesheet">
 <style>
   :root{
-    --text:#373737; --sub:#7a7a7a; --line:#e6e6e6; --gray:#e3e1de; --card:#f7f6f4;
-    --orange:#ff914d; --orange-bg:#fff3eb; --yellow:#ffde59; --blue:#1458d6;
+    --navy:#0a1a47; --blue:#0b56d0; --sky:#2992d5; --cyan:#3ad0e0; --violet:#634fcb;
+    --ink:#1d2433; --sub:#5d6678; --line:#e3e8f2; --bg:#f4f7fc; --card:#ffffff;
+    --orange:#ff7a30; --orange-soft:#fff1e8; --gold:#f4b73f;
+    --light:#13a89e; --light-soft:#e7f7f5;
+    --std:#0b56d0; --std-soft:#eaf1ff;
+    --pre:#634fcb; --pre-soft:#f0edff;
+    --brand-grad:linear-gradient(135deg,#2992d5 0%,#0b56d0 50%,#634fcb 100%);
+    --radius:18px; --shadow:0 10px 30px rgba(16,40,100,.08); --shadow-lg:0 18px 50px rgba(16,40,100,.16);
   }
   *{box-sizing:border-box}
-  body{margin:0;color:var(--text);background:#fff;
-    font-family:"Hiragino Sans","Hiragino Kaku Gothic ProN","Noto Sans JP","Yu Gothic","Meiryo",sans-serif;
-    line-height:1.6;-webkit-font-smoothing:antialiased}
-  a{color:inherit}
-  header{border-bottom:1px solid var(--line)}
-  .wrap{max-width:1080px;margin:0 auto;padding:0 20px}
-  .head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 0}
-  .brand{display:flex;align-items:center;gap:12px}
-  .brand img{height:52px}
-  .brand .t{font-weight:700;font-size:15px;line-height:1.3}
-  .brand .t small{display:block;font-weight:400;color:var(--sub);font-size:12px}
-  .btn{appearance:none;border:1px solid var(--text);background:#fff;color:var(--text);border-radius:999px;
-    padding:9px 18px;font:inherit;font-size:14px;font-weight:700;cursor:pointer;white-space:nowrap}
-  .btn:hover{background:var(--text);color:#fff}
-  .btn:focus-visible,input:focus-visible,select:focus-visible,label.plan:focus-within{outline:3px solid var(--yellow);outline-offset:2px}
-  h1{font-size:24px;margin:28px 0 4px}
-  .lead{color:var(--sub);margin:0 0 24px;font-size:14px}
-  .grid{display:grid;grid-template-columns:1fr 340px;gap:28px;align-items:start}
-  @media (max-width:860px){.grid{grid-template-columns:1fr}}
-  section.step{margin-bottom:28px}
-  .step h2{font-size:16px;margin:0 0 10px;display:flex;align-items:center;gap:10px}
-  .num{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:50%;background:var(--text);color:#fff;font-size:13px;flex:none}
-  .hint{color:var(--sub);font-size:12.5px;margin:6px 0 0}
-  .row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
-  .minutes{display:flex;align-items:center;border:1px solid #cdcdcd;border-radius:10px;overflow:hidden}
-  .minutes button{border:0;background:var(--card);width:44px;height:46px;font-size:20px;cursor:pointer;color:var(--text)}
-  .minutes input{width:90px;height:46px;border:0;text-align:center;font-size:20px;font-weight:700;color:var(--text)}
-  .unit{font-weight:700}
-  .chips{display:flex;flex-wrap:wrap;gap:8px}
-  .chip{border:1px solid #cdcdcd;background:#fff;border-radius:999px;padding:6px 14px;font:inherit;font-size:13px;cursor:pointer;color:var(--text)}
-  .chip[aria-pressed="true"]{background:var(--text);border-color:var(--text);color:#fff}
-  .plans{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-  @media (max-width:600px){.plans{grid-template-columns:1fr}}
-  label.plan{position:relative;display:block;border:1px solid #cdcdcd;border-radius:12px;padding:16px 14px 14px;cursor:pointer;background:#fff}
-  label.plan input{position:absolute;opacity:0;pointer-events:none}
-  label.plan .nm{font-weight:700;font-size:16px}
-  label.plan .pr{font-weight:700;font-size:20px;margin:2px 0 6px}
-  label.plan .pr small{font-size:12px;color:var(--sub);font-weight:400}
-  label.plan ul{margin:0;padding-left:1.1em;font-size:12.5px;color:var(--text)}
-  label.plan.sel{border:2px solid var(--text);padding:15px 13px 13px;background:var(--card)}
-  label.plan.std.sel{border-color:var(--orange);background:var(--orange-bg)}
-  label.plan.std .pr{color:var(--orange)}
-  .badge{position:absolute;top:-11px;left:50%;transform:translateX(-50%);background:var(--orange);color:#fff;font-size:11.5px;font-weight:700;border-radius:999px;padding:2px 12px}
-  .opts{border:1px solid var(--line);border-radius:12px;overflow:hidden}
-  .opt{display:grid;grid-template-columns:1fr auto;gap:8px 14px;align-items:center;padding:12px 14px;border-top:1px solid var(--line)}
-  .opt:first-child{border-top:0}
-  .opt .l{display:flex;gap:10px;align-items:flex-start}
-  .opt input[type=checkbox]{width:20px;height:20px;margin:2px 0 0;accent-color:var(--text);flex:none}
-  .opt .nm{font-weight:700;font-size:14px}
-  .opt .pr{font-size:12.5px;color:var(--sub)}
-  .opt .q{display:flex;align-items:center;gap:6px;font-size:13px}
-  .opt .q input{width:64px;height:36px;border:1px solid #cdcdcd;border-radius:8px;text-align:center;font-size:15px}
-  .opt .q input:disabled{background:#f2f2f2;color:#aaa}
-  .opt select{height:36px;border:1px solid #cdcdcd;border-radius:8px;font:inherit;font-size:14px;padding:0 8px;background:#fff;color:var(--text)}
-  .group{font-size:12.5px;font-weight:700;background:var(--gray);padding:6px 14px}
+  html{scroll-behavior:smooth}
+  body{margin:0;color:var(--ink);background:var(--bg);font-family:"Noto Sans JP","Hiragino Sans","Yu Gothic",sans-serif;line-height:1.65;-webkit-font-smoothing:antialiased}
+  .num-font{font-family:"Inter","Noto Sans JP",sans-serif;font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+  button,input,select{font:inherit;color:inherit}
+  .wrap{max-width:1140px;margin:0 auto;padding:0 20px}
+  :focus-visible{outline:3px solid var(--gold);outline-offset:2px;border-radius:10px}
+
+  /* ===== header / hero ===== */
+  .hero{position:relative;overflow:hidden;color:#fff;
+    background:radial-gradient(1000px 480px at 88% -10%,rgba(41,146,213,.55),transparent 60%),
+               radial-gradient(800px 480px at 100% 110%,rgba(99,79,203,.55),transparent 60%),
+               radial-gradient(700px 400px at -10% 110%,rgba(58,208,224,.25),transparent 60%),
+               linear-gradient(135deg,#06122f 0%,#0a2a7a 50%,#0b56d0 100%);}
+  .hero::after{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.05) 1px,transparent 1px);background-size:36px 36px;mask-image:linear-gradient(180deg,rgba(0,0,0,.6),transparent 85%);pointer-events:none}
+  .topbar{position:relative;z-index:2;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 0}
+  .brand{display:flex;align-items:center;gap:10px;color:#fff;text-decoration:none}
+  .brand .ico{height:34px;width:auto}
+  .brand .wm{height:34px;width:auto}
+  .brand .div{width:1px;height:26px;background:rgba(255,255,255,.3);margin:0 4px}
+  .byd{display:inline-flex;align-items:center;gap:8px;margin-top:18px;background:#fff;border-radius:999px;padding:5px 14px 5px 6px;font-size:12px;font-weight:700;color:var(--navy);box-shadow:0 8px 20px rgba(0,0,0,.18)}
+  .byd img{height:24px}
+  .byd span{background:var(--brand-grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .hero-card .wmk{position:absolute;right:-18px;bottom:-22px;width:170px;opacity:.12;pointer-events:none}
+  @media (max-width:520px){.brand .wm{height:26px}.brand .ico{height:28px}}
+  .btn-ghost{display:inline-flex;align-items:center;gap:8px;border:1px solid rgba(255,255,255,.45);background:rgba(255,255,255,.08);color:#fff;border-radius:999px;padding:9px 18px;font-weight:700;font-size:14px;cursor:pointer;backdrop-filter:blur(6px);transition:.2s}
+  .btn-ghost:hover{background:#fff;color:var(--navy)}
+  .hero-body{position:relative;z-index:2;padding:34px 0 92px;display:grid;grid-template-columns:1.25fr .75fr;gap:30px;align-items:center}
+  @media (max-width:860px){.hero-body{grid-template-columns:1fr;padding:20px 0 80px}}
+  .eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:700;letter-spacing:.12em;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);border-radius:999px;padding:5px 12px}
+  .eyebrow i{width:8px;height:8px;border-radius:50%;background:var(--cyan);box-shadow:0 0 0 4px rgba(58,208,224,.25)}
+  .hero h1{font-size:clamp(28px,4.6vw,46px);line-height:1.25;margin:16px 0 12px;font-weight:900;letter-spacing:.02em}
+  .hero h1 span{background:linear-gradient(90deg,#fff,#9fe7ff);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .hero p.lead{margin:0;font-size:15px;opacity:.88;max-width:560px}
+  .feats{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
+  .feat{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:12px;padding:8px 12px;font-size:13px;font-weight:500}
+  .feat svg{width:18px;height:18px;flex:none}
+  .hero-card{position:relative;overflow:hidden;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.25);border-radius:22px;padding:22px;backdrop-filter:blur(10px)}
+  .hero-card .k{font-size:12px;opacity:.8;letter-spacing:.08em}
+  .hero-card .big{font-size:40px;font-weight:800;line-height:1.1;margin:4px 0}
+  .hero-card .big small{font-size:15px;font-weight:600;opacity:.8}
+  .hero-card .row{display:flex;justify-content:space-between;font-size:13px;padding:8px 0;border-top:1px solid rgba(255,255,255,.18)}
+  .hero-card .row:first-of-type{margin-top:10px}
+
+  /* ===== layout ===== */
+  main{position:relative;z-index:3;margin-top:-56px}
+  .grid{display:grid;grid-template-columns:1fr 360px;gap:24px;align-items:start}
+  @media (max-width:960px){.grid{grid-template-columns:1fr}}
+  .panel{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:24px;margin-bottom:20px}
+  .step-h{display:flex;align-items:center;gap:12px;margin:0 0 16px}
+  .step-n{width:36px;height:36px;border-radius:12px;display:grid;place-items:center;color:#fff;font-weight:800;background:var(--brand-grad);box-shadow:0 6px 14px rgba(11,86,208,.3);flex:none}
+  .step-h h2{margin:0;font-size:18px;font-weight:700}
+  .step-h p{margin:0;font-size:12.5px;color:var(--sub)}
+  .hint{font-size:12.5px;color:var(--sub);margin:12px 0 0}
+
+  /* stepper */
+  .len{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+  .stepper{display:flex;align-items:center;background:var(--bg);border-radius:16px;padding:6px;border:1px solid var(--line)}
+  .stepper button{width:46px;height:46px;border:0;border-radius:12px;background:#fff;box-shadow:0 2px 6px rgba(16,40,100,.08);font-size:22px;cursor:pointer;color:var(--blue);font-weight:700}
+  .stepper button:active{transform:scale(.96)}
+  .stepper input{width:96px;border:0;background:transparent;text-align:center;font-size:30px;font-weight:800;color:var(--navy)}
+  .stepper input::-webkit-inner-spin-button{appearance:none}
+  .len .unit{font-weight:700;color:var(--sub)}
+  .pills{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+  .pill{border:1px solid var(--line);background:#fff;border-radius:999px;padding:7px 16px;font-size:13.5px;font-weight:500;cursor:pointer;transition:.15s}
+  .pill:hover{border-color:var(--blue);color:var(--blue)}
+  .pill[aria-pressed="true"]{background:var(--navy);border-color:var(--navy);color:#fff}
+  .seg{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+  @media (max-width:560px){.seg{grid-template-columns:repeat(3,1fr)}}
+  .seg button{border:1px solid var(--line);background:#fff;border-radius:14px;padding:12px 6px;cursor:pointer;transition:.15s;text-align:center}
+  .seg button b{display:block;font-size:20px;font-weight:800;color:var(--navy)}
+  .seg button small{font-size:11.5px;color:var(--sub)}
+  .seg button:hover{border-color:var(--blue)}
+  .seg button[aria-pressed="true"]{background:var(--brand-grad);border-color:transparent;box-shadow:0 8px 18px rgba(20,88,214,.28)}
+  .seg button[aria-pressed="true"] b,.seg button[aria-pressed="true"] small{color:#fff}
+  .meter{margin-top:16px;background:var(--bg);border-radius:14px;padding:14px 16px}
+  .meter .bar{position:relative;height:10px;border-radius:99px;background:#dfe6f3;overflow:hidden;margin:8px 0 6px}
+  .meter .fill{position:absolute;left:0;top:0;bottom:0;border-radius:99px;background:linear-gradient(90deg,var(--light),var(--cyan));transition:width .35s}
+  .meter .over{position:absolute;top:0;bottom:0;background:repeating-linear-gradient(45deg,var(--orange),var(--orange) 6px,#ff9c63 6px,#ff9c63 12px);transition:.35s}
+  .meter .t{display:flex;justify-content:space-between;font-size:12.5px;color:var(--sub)}
+  .meter .msg{font-size:13.5px;font-weight:700}
+  .meter .msg.ok{color:var(--light)} .meter .msg.ng{color:var(--orange)}
+
+  /* plans */
+  .plans{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  @media (max-width:720px){.plans{grid-template-columns:1fr}}
+  .plan{--c:var(--light);--s:var(--light-soft);position:relative;display:flex;flex-direction:column;border:2px solid var(--line);border-radius:18px;padding:18px 16px 16px;cursor:pointer;background:#fff;transition:.2s;text-align:left}
+  .plan[data-id="standard"]{--c:var(--std);--s:var(--std-soft)}
+  .plan[data-id="premium"]{--c:var(--pre);--s:var(--pre-soft)}
+  .plan:hover{transform:translateY(-3px);box-shadow:var(--shadow-lg)}
+  .plan input{position:absolute;opacity:0;pointer-events:none}
+  .plan .ic{width:42px;height:42px;border-radius:12px;background:var(--s);color:var(--c);display:grid;place-items:center;margin-bottom:10px}
+  .plan .ic svg{width:22px;height:22px}
+  .plan .en{font-size:11px;font-weight:700;letter-spacing:.14em;color:var(--c)}
+  .plan .nm{font-size:18px;font-weight:900;line-height:1.3}
+  .plan .cc{font-size:12px;color:var(--sub);margin:2px 0 10px;min-height:2.6em}
+  .plan .pr{font-size:26px;font-weight:800;color:var(--c);line-height:1.1}
+  .plan .pr small{font-size:12px;color:var(--sub);font-weight:600;margin-left:4px}
+  .plan ul{list-style:none;margin:12px 0 0;padding:12px 0 0;border-top:1px dashed var(--line);font-size:12.5px;display:grid;gap:5px}
+  .plan li{display:flex;gap:7px;align-items:flex-start}
+  .plan li::before{content:"";flex:none;width:15px;height:15px;margin-top:3px;border-radius:50%;background:var(--s) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12l5 5L20 7'/%3E%3C/svg%3E") center/9px no-repeat}
+  .plan.sel{border-color:var(--c);background:linear-gradient(180deg,var(--s),#fff 60%);box-shadow:0 14px 34px rgba(16,40,100,.14)}
+  .plan .check{position:absolute;top:14px;right:14px;width:24px;height:24px;border-radius:50%;border:2px solid var(--line);display:grid;place-items:center;transition:.2s}
+  .plan.sel .check{background:var(--c);border-color:var(--c)}
+  .plan.sel .check::after{content:"";width:10px;height:6px;border:solid #fff;border-width:0 0 2.5px 2.5px;transform:rotate(-45deg) translate(1px,-1px)}
+  .badge{position:absolute;top:-12px;left:16px;background:linear-gradient(90deg,var(--orange),#ffa15c);color:#fff;font-size:11.5px;font-weight:700;border-radius:999px;padding:3px 12px;box-shadow:0 6px 14px rgba(255,122,48,.35)}
+
+  /* options */
+  .ogroup{margin-top:18px}
+  .ogroup:first-child{margin-top:0}
+  .ogroup h3{font-size:13px;font-weight:700;color:var(--sub);letter-spacing:.06em;margin:0 0 10px;display:flex;align-items:center;gap:8px}
+  .ogroup h3::after{content:"";flex:1;height:1px;background:var(--line)}
+  .otiles{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+  @media (max-width:640px){.otiles{grid-template-columns:1fr}}
+  .ot{display:flex;align-items:center;gap:12px;border:1.5px solid var(--line);border-radius:14px;padding:12px 14px;background:#fff;transition:.15s;cursor:pointer}
+  .ot:hover{border-color:#b9c9ea}
+  .ot.on{border-color:var(--blue);background:var(--std-soft)}
+  .ot .oi{width:38px;height:38px;border-radius:11px;background:var(--bg);color:var(--blue);display:grid;place-items:center;flex:none}
+  .ot.on .oi{background:var(--blue);color:#fff}
+  .ot .oi svg{width:20px;height:20px}
+  .ot .tx{flex:1;min-width:0}
+  .ot .nm{font-weight:700;font-size:14px;line-height:1.35}
+  .ot .pr{font-size:12px;color:var(--sub)}
+  .sw{position:relative;width:42px;height:24px;flex:none}
+  .sw input{position:absolute;inset:0;opacity:0;cursor:pointer;margin:0}
+  .sw span{position:absolute;inset:0;border-radius:99px;background:#d4dbe8;transition:.2s;pointer-events:none}
+  .sw span::after{content:"";position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.2);transition:.2s}
+  .sw input:checked+span{background:var(--blue)}
+  .sw input:checked+span::after{transform:translateX(18px)}
+  .sw input:focus-visible+span{outline:3px solid var(--gold);outline-offset:2px}
+  .qty{display:flex;align-items:center;gap:4px;margin-top:6px}
+  .qty button{width:26px;height:26px;border-radius:8px;border:1px solid var(--line);background:#fff;cursor:pointer;font-weight:700;color:var(--blue);line-height:1}
+  .qty output{min-width:34px;text-align:center;font-weight:700;font-size:14px}
+  .qty[hidden]{display:none}
+  .incl{display:flex;gap:10px;align-items:flex-start;margin-top:16px;background:linear-gradient(90deg,var(--pre-soft),var(--std-soft));border-radius:14px;padding:12px 14px;font-size:13px}
+  .incl svg{width:20px;height:20px;color:var(--pre);flex:none;margin-top:1px}
+
   /* result */
-  .result{position:sticky;top:16px;border:1px solid #cdcdcd;border-radius:14px;padding:18px}
-  .result h2{font-size:15px;margin:0 0 10px}
+  .result{position:sticky;top:16px;border-radius:22px;overflow:hidden;box-shadow:var(--shadow-lg);background:#fff}
+  .r-top{position:relative;overflow:hidden;padding:20px 22px 18px;color:#fff;background:linear-gradient(135deg,#0a2a7a,#0b56d0 55%,#634fcb)}
+  .r-top .wmk{position:absolute;right:-14px;top:-10px;width:110px;opacity:.13;pointer-events:none}
+  .r-top .k{font-size:12px;letter-spacing:.1em;opacity:.85}
+  .r-top .sum{font-size:13px;opacity:.9;margin-top:2px}
+  .r-total{font-size:36px;font-weight:800;line-height:1.15;margin:8px 0 2px;word-break:keep-all}
+  .r-total small{font-size:17px;font-weight:700;opacity:.85}
+  .r-total.quote{font-size:26px}
+  .r-tag{display:inline-block;margin-top:6px;font-size:11.5px;background:rgba(255,255,255,.18);border-radius:99px;padding:2px 10px}
+  .r-body{padding:16px 22px 20px}
   .lines{list-style:none;margin:0;padding:0;font-size:13.5px}
-  .lines li{display:flex;justify-content:space-between;gap:12px;padding:7px 0;border-top:1px dashed var(--line)}
-  .lines li:first-child{border-top:0}
-  .lines li span:last-child{white-space:nowrap;font-variant-numeric:tabular-nums}
-  .lines li.sub{color:var(--sub);font-size:12.5px}
-  .total{margin-top:12px;padding-top:12px;border-top:2px solid var(--text)}
-  .total .lb{font-size:13px;font-weight:700}
-  .total .v{font-size:28px;font-weight:700;color:var(--orange);line-height:1.25;font-variant-numeric:tabular-nums}
-  .total .v small{font-size:16px}
-  .warn{margin-top:10px;background:var(--orange-bg);border-radius:8px;padding:8px 10px;font-size:12.5px}
-  .note{color:var(--sub);font-size:12px;margin:10px 0 0}
-  footer{border-top:1px solid var(--line);margin-top:40px;padding:18px 0 30px;color:var(--sub);font-size:12px}
-  footer .wrap{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
-  footer img{height:34px}
-  /* price list dialog */
-  dialog{border:0;border-radius:16px;padding:0;width:min(920px,94vw);max-height:90vh;color:var(--text)}
-  dialog::backdrop{background:rgba(0,0,0,.45)}
-  .dl-head{display:flex;justify-content:space-between;align-items:center;padding:16px 20px;border-bottom:1px solid var(--line);position:sticky;top:0;background:#fff}
-  .dl-head h2{margin:0;font-size:18px}
-  .dl-body{padding:18px 20px 24px}
-  .dl-body h3{font-size:15px;margin:22px 0 8px}
-  .dl-body h3:first-child{margin-top:0}
-  .tbl-scroll{overflow-x:auto}
-  table{border-collapse:collapse;width:100%;font-size:13.5px}
-  th,td{border:1px solid var(--line);padding:9px 10px;text-align:center}
-  th{background:var(--gray)}
-  td.l,th.l{text-align:left}
-  td.r{text-align:right}
-  .col30{background:#fffbe6}
-  th.col30{background:var(--yellow);color:var(--orange)}
-  tr.std td{color:var(--orange);font-weight:700}
-  .two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-  @media (max-width:700px){.two{grid-template-columns:1fr}}
-  .dl-body ul{margin:0;padding-left:1.2em;font-size:13.5px}
+  .lines li{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid var(--line)}
+  .lines li span:last-child{white-space:nowrap;font-weight:700}
+  .lines li.base span:first-child{font-weight:700}
+  .warn{margin-top:10px;background:var(--orange-soft);color:#8a3b0c;border-radius:10px;padding:8px 12px;font-size:12.5px;display:flex;gap:8px}
+  .note{color:var(--sub);font-size:11.5px;margin:12px 0 0;line-height:1.6}
+  .cta{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;border:0;border-radius:14px;padding:13px;font-weight:700;font-size:15px;cursor:pointer;margin-top:14px;color:#fff;background:linear-gradient(90deg,var(--orange),#ff9a52);box-shadow:0 10px 22px rgba(255,122,48,.35);transition:.15s}
+  .cta:hover{transform:translateY(-1px);box-shadow:0 14px 26px rgba(255,122,48,.42)}
+  .cta svg{width:18px;height:18px}
+  .sub-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;border:1.5px solid var(--line);background:#fff;border-radius:14px;padding:11px;font-weight:700;font-size:14px;cursor:pointer;margin-top:10px;color:var(--navy)}
+  .sub-btn:hover{border-color:var(--blue);color:var(--blue)}
+  .toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%) translateY(20px);background:var(--navy);color:#fff;border-radius:12px;padding:10px 16px;font-size:13.5px;opacity:0;pointer-events:none;transition:.25s;z-index:50}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+  /* mobile bar */
   .mbar{display:none}
-  @media (max-width:860px){
+  @media (max-width:960px){
     .result{position:static}
-    .mbar{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:5;background:#fff;border-top:1px solid #cdcdcd;
-      padding:10px 16px calc(10px + env(safe-area-inset-bottom));align-items:center;justify-content:space-between;gap:10px;box-shadow:0 -4px 12px rgba(0,0,0,.06)}
-    .mbar .v{font-weight:700;color:var(--orange);font-size:18px;line-height:1.2}
-    .mbar .lb{font-size:11px;color:var(--sub)}
-    body{padding-bottom:76px}
+    .mbar{display:flex;position:fixed;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom));z-index:20;border-radius:18px;padding:10px 12px 10px 18px;align-items:center;justify-content:space-between;gap:10px;color:#fff;background:linear-gradient(135deg,#0a2a7a,#0b56d0 60%,#634fcb);box-shadow:0 14px 30px rgba(11,42,111,.35)}
+    .mbar .k{font-size:11px;opacity:.8}
+    .mbar .v{font-weight:800;font-size:19px;line-height:1.2}
+    .mbar a{background:#fff;color:var(--navy);text-decoration:none;font-weight:700;font-size:13px;border-radius:12px;padding:9px 14px;white-space:nowrap}
+    body{padding-bottom:96px}
   }
-  .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+
+  footer{margin-top:36px;padding:30px 0 36px;background:#fff;border-top:1px solid var(--line);color:var(--sub);font-size:12px}
+  footer .wrap{display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap}
+  footer .fl{display:flex;align-items:center;gap:14px}
+  footer .fl img{height:46px}
+  footer .fr{display:flex;align-items:center;gap:10px}
+  footer .fr img{height:40px}
+
+  /* dialog */
+  dialog{border:0;border-radius:22px;padding:0;width:min(960px,94vw);max-height:90vh;color:var(--ink);box-shadow:var(--shadow-lg)}
+  dialog::backdrop{background:rgba(7,21,56,.55);backdrop-filter:blur(3px)}
+  .dl-head{display:flex;justify-content:space-between;align-items:center;padding:18px 22px;position:sticky;top:0;z-index:2;color:#fff;background:linear-gradient(135deg,#0a2a7a,#0b56d0 60%,#634fcb)}
+  .dl-head h2{margin:0;font-size:18px}
+  .dl-body{padding:20px 22px 26px}
+  .dl-body h3{font-size:15px;margin:24px 0 10px;display:flex;align-items:center;gap:8px}
+  .dl-body h3::before{content:"";width:6px;height:18px;border-radius:3px;background:var(--brand-grad)}
+  .dl-body h3:first-child{margin-top:0}
+  .tbl{overflow-x:auto;border:1px solid var(--line);border-radius:14px}
+  table{border-collapse:collapse;width:100%;font-size:13.5px;min-width:560px}
+  .two table{min-width:0}
+  th,td{padding:11px 12px;text-align:center;border-bottom:1px solid var(--line)}
+  tr:last-child td{border-bottom:0}
+  thead th{background:#f0f4fb;font-weight:700;font-size:13px}
+  td.l,th.l{text-align:left} td.r{text-align:right}
+  td.p{font-weight:800}
+  .c30{background:#fffbea}
+  thead th.c30{background:#ffe27a;color:#7a4b00}
+  tr.std td{background:var(--std-soft)} tr.std td.c30{background:#dfe9ff}
+  tr.std td.p,tr.std .pn{color:var(--blue)}
+  .pn{font-weight:800}
+  .rb{display:inline-block;margin-left:6px;font-size:10.5px;color:#fff;background:var(--orange);border-radius:99px;padding:1px 8px;vertical-align:2px}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start}
+  @media (max-width:720px){.two{grid-template-columns:1fr}}
+  .stack{display:grid;gap:14px}
+  .gh th{background:#f0f4fb;text-align:left}
+  .dl-body ul{margin:0;padding-left:1.2em;font-size:13.5px;display:grid;gap:4px}
+  .dl-note{font-size:12.5px;color:var(--sub);margin:10px 0 0}
+  @media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
 </style>
 </head>
 <body>
-<header>
-  <div class="wrap head">
-    <div class="brand">
-      <img src="logo_medicri.png" alt="メディクリ Medical Creator">
-      <div class="t">動画編集 料金シミュレーター<small>見やすく、わかりやすく、伝わる動画へ。</small></div>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="topbar">
+      <a class="brand" href="./" aria-label="メディクリ トップ">
+        <img class="ico" src="assets/medicri_icon_white.png" alt="">
+        <img class="wm" src="assets/medicri_wordmark_white.png" alt="メディクリ Medical Creator">
+      </a>
+      <button class="btn-ghost" type="button" data-open-list>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M3 10h18M9 10v10"/></svg>
+        料金一覧を見る
+      </button>
     </div>
-    <button class="btn" id="openList" type="button">料金一覧を見る</button>
+    <div class="hero-body">
+      <div>
+        <span class="eyebrow"><i></i>PRICE SIMULATOR</span>
+        <h1><span>見やすく、わかりやすく、<br>伝わる動画へ。</span></h1>
+        <p class="lead">元の動画の長さとプランを選ぶだけで、動画編集の料金のめやすがすぐにわかります。</p>
+        <div class="feats">
+          <div class="feat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg>臨床工学技士の現場目線</div>
+          <div class="feat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"/><circle cx="12" cy="12" r="3"/></svg>AIの効率 × 人の確認</div>
+          <div class="feat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></svg>目的に合わせた3プラン</div>
+        </div>
+        <div class="byd"><img src="assets/dimix_icon.png" alt="">a service by <span>DimiX</span></div>
+      </div>
+      <div class="hero-card" aria-hidden="true">
+        <img class="wmk" src="assets/medicri_icon_white.png" alt="">
+        <div class="k">おすすめ｜スタンダードプラン</div>
+        <div class="big num-font" id="heroPrice"></div>
+        <div class="row"><span>カット・ノイズ除去</span><span>含む</span></div>
+        <div class="row"><span>フルテロップ（校正込み）</span><span>含む</span></div>
+        <div class="row"><span>修正対応</span><span>2回まで</span></div>
+      </div>
+    </div>
   </div>
 </header>
 
 <main class="wrap">
-  <h1>料金のめやすを計算する</h1>
-  <p class="lead">元の動画の長さ、完成動画の長さ、プラン、オプションを選ぶと、料金のめやすを表示します。</p>
-
   <div class="grid">
     <div>
-      <section class="step">
-        <h2><span class="num">1</span>元の動画（撮影した素材）の長さ</h2>
-        <div class="row">
-          <div class="minutes">
+      <section class="panel" aria-labelledby="h1s">
+        <div class="step-h"><span class="step-n">1</span><div><h2 id="h1s">元の動画（撮影した素材）の長さ</h2><p>複数のファイルがある場合は合計の長さ</p></div></div>
+        <div class="len">
+          <div class="stepper">
             <button type="button" id="rawMinus" aria-label="10分減らす">−</button>
-            <input id="raw" type="number" inputmode="numeric" min="1" max="600" value="60" aria-label="元の動画の長さ（分）">
+            <input id="raw" class="num-font" type="number" inputmode="numeric" min="1" max="600" value="60" aria-label="元の動画の長さ（分）">
             <button type="button" id="rawPlus" aria-label="10分増やす">＋</button>
           </div>
           <span class="unit">分</span>
         </div>
-        <div class="chips" style="margin-top:10px" id="rawChips"></div>
-        <p class="hint">複数のファイルがある場合は、合計の長さを入れてください。</p>
+        <div class="pills" id="rawChips" aria-label="よく使う長さ"></div>
       </section>
 
-      <section class="step">
-        <h2><span class="num">2</span>完成動画の長さ</h2>
-        <div class="chips" id="finChips" role="group" aria-label="完成動画の長さ"></div>
-        <p class="hint" id="capHint"></p>
+      <section class="panel" aria-labelledby="h2s">
+        <div class="step-h"><span class="step-n">2</span><div><h2 id="h2s">完成動画の長さ</h2><p>料金は完成動画の長さで決まります</p></div></div>
+        <div class="seg" id="finChips" role="group" aria-label="完成動画の長さ"></div>
+        <div class="meter" id="meter">
+          <div class="msg" id="meterMsg"></div>
+          <div class="bar"><div class="fill" id="meterFill"></div><div class="over" id="meterOver"></div></div>
+          <div class="t"><span>元の動画 <b id="meterRaw"></b></span><span>基本料金に含む上限 <b id="meterCap"></b>（完成動画の1.5倍）</span></div>
+        </div>
       </section>
 
-      <section class="step">
-        <h2><span class="num">3</span>プラン</h2>
-        <div class="plans" id="plans"></div>
+      <section class="panel" aria-labelledby="h3s">
+        <div class="step-h"><span class="step-n">3</span><div><h2 id="h3s">プラン</h2><p>目的と予算に合わせてお選びください</p></div></div>
+        <div class="plans" id="plans" role="radiogroup" aria-label="プラン"></div>
       </section>
 
-      <section class="step">
-        <h2><span class="num">4</span>オプション</h2>
-        <div class="opts" id="opts"></div>
-        <p class="hint">フルテロップはスタンダード以上、オリジナル図解・イラスト作成と資料挿入はプレミアムに含まれます。必要な場合はプランでお選びください。</p>
+      <section class="panel" aria-labelledby="h4s">
+        <div class="step-h"><span class="step-n">4</span><div><h2 id="h4s">オプション</h2><p>必要なものだけオンにしてください</p></div></div>
+        <div id="opts"></div>
+        <div class="incl">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M11 12h1v5h1"/></svg>
+          <span>フルテロップはスタンダード以上、オリジナル図解・イラスト作成とPowerPointなどの資料挿入はプレミアムに含まれます。必要な場合はプランでお選びください。</span>
+        </div>
       </section>
     </div>
 
     <aside class="result" id="result" aria-live="polite">
-      <h2>料金のめやす</h2>
-      <ul class="lines" id="lines"></ul>
-      <div class="total">
-        <div class="lb">合計（めやす）</div>
-        <div class="v" id="total"></div>
+      <div class="r-top">
+        <img class="wmk" src="assets/medicri_icon_white.png" alt="">
+        <div class="k">料金のめやす</div>
+        <div class="sum" id="sumLine"></div>
+        <div class="r-total num-font" id="total"></div>
+        <span class="r-tag" id="tag">概算</span>
       </div>
-      <div id="warns"></div>
-      <p class="note">表示金額は概算です。オプション料金は編集内容や作業量によって変わります。正式な料金は、ご依頼内容を確認したうえでお見積もりを提示します。撮影費用、交通費、特殊な有料素材の購入費用は別途となります。</p>
-      <button class="btn" type="button" id="openList2" style="width:100%;margin-top:12px">料金一覧を見る</button>
+      <div class="r-body">
+        <ul class="lines" id="lines"></ul>
+        <div id="warns"></div>
+        <button class="cta" type="button" id="copyBtn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a1 1 0 011-1h10"/></svg>
+          この内容をコピーして相談する
+        </button>
+        <button class="sub-btn" type="button" data-open-list>料金一覧を見る</button>
+        <p class="note">表示金額は概算です。オプション料金は編集内容や作業量によって変わります。正式な料金は、ご依頼内容を確認したうえでお見積もりを提示します。撮影費用、交通費、特殊な有料素材の購入費用は別途となります。</p>
+      </div>
     </aside>
   </div>
 </main>
 
+<div class="mbar">
+  <div><div class="k">合計（めやす）</div><div class="v num-font" id="mtotal"></div></div>
+  <a href="#result">内訳を見る</a>
+</div>
+<div class="toast" id="toast" role="status"></div>
+
 <dialog id="listDlg" aria-labelledby="dlTitle">
   <div class="dl-head">
     <h2 id="dlTitle">料金一覧</h2>
-    <button class="btn" type="button" id="closeList">閉じる</button>
+    <button class="btn-ghost" type="button" id="closeList">閉じる</button>
   </div>
   <div class="dl-body" id="listBody"></div>
 </dialog>
 
-<div class="mbar" aria-hidden="true">
-  <div><div class="lb">合計（めやす）</div><div class="v" id="mtotal"></div></div>
-  <a class="btn" href="#result">内訳を見る</a>
-</div>
-
 <footer>
   <div class="wrap">
-    <span>メディクリ｜DimiX の医療・教育向け動画編集サービス</span>
-    <img src="logo_dimix.png" alt="DimiX">
+    <div class="fl"><img src="assets/medicri_wordmark.png" alt="メディクリ Medical Creator"><span>医療・教育コンテンツに強い<br>動画編集サービス</span></div>
+    <div class="fr"><span>運営</span><img src="assets/dimix_logo.png" alt="DimiX 「いつも」に、DXという選択を。"></div>
   </div>
 </footer>
 
 <script>
-/* ===== 料金データ（資料「メディクリ業者様用プレゼン資料_改訂版」と同じ値） ===== */
+/* ===== 料金データ（資料「メディクリ業者様用プレゼン資料_改訂版」と同じ値。料金を変えるときはここだけ直す） ===== */
 const TIERS = [15, 30, 45, 60];
-const CAP_RATIO = 1.5;            // 元素材は完成動画の1.5倍まで基本料金に含む
+const CAP_RATIO = 1.5;                          // 元素材は完成動画の1.5倍まで基本料金に含む
 const OVER_UNIT_MIN = 30, OVER_UNIT_YEN = 5000; // 超過分 ¥5,000／30分〜
 const PLANS = [
-  {id:"light", name:"ライト", prices:[6000,10000,14000,18000],
-   items:["前後カット・動画の結合","音量・明るさ調整","タイトル挿入","修正対応1回"]},
-  {id:"standard", name:"スタンダード", prices:[20000,40000,50000,65000], recommend:true,
-   items:["ライトの全内容","詳細カット・ノイズ除去","フルテロップ（校正込み）","BGM・修正対応2回"]},
-  {id:"premium", name:"プレミアム", prices:[35000,60000,85000,110000],
-   items:["スタンダードの全内容","図解・イラスト作成","資料挿入・アニメーション","修正対応3回"]},
+  {id:"light", en:"LIGHT", name:"ライト", copy:"シンプルに、きれいに、使いやすく。", prices:[6000,10000,14000,18000],
+   items:["前後カット・動画の結合","音量・明るさ調整","タイトル挿入","修正対応1回"],
+   icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M20 4L8.1 15.9M14.5 14.5L20 20M8.1 8.1L12 12"/></svg>'},
+  {id:"standard", en:"STANDARD", name:"スタンダード", copy:"わかりやすく、見やすく、伝わる動画へ。", prices:[20000,40000,50000,65000], recommend:true,
+   items:["ライトの全内容","詳細カット・ノイズ除去","フルテロップ（校正込み）","BGM・修正対応2回"],
+   icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M7 15h4M13 15h4M7 11h10"/></svg>'},
+  {id:"premium", en:"PREMIUM", name:"プレミアム", copy:"理解を深め、印象に残る高品質なコンテンツへ。", prices:[35000,60000,85000,110000],
+   items:["スタンダードの全内容","図解・イラスト作成","資料挿入・アニメーション","修正対応3回"],
+   icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3l2.6 5.4 5.9.8-4.3 4.1 1 5.8L12 16.4 6.8 19.1l1-5.8L3.5 9.2l5.9-.8z"/></svg>'},
 ];
 /* type: qty=数量, flag=あり/なし, pct=基本料金の割増, quote=個別見積もり
    min/max: 単価の幅。open:true は「〜」（上限なし） */
 const OPTIONS = [
   {group:"追加制作"},
-  {id:"thumb", name:"サムネイル作成", type:"qty", unit:"枚", min:3000, max:3000, label:"¥3,000／枚"},
-  {id:"narration", name:"AIナレーション", type:"flag", min:3000, max:10000, label:"¥3,000〜10,000"},
-  {id:"short", name:"ショート動画への再編集", type:"qty", unit:"本", min:5000, max:5000, open:true, label:"¥5,000／本〜"},
+  {id:"thumb", name:"サムネイル作成", type:"qty", unit:"枚", min:3000, max:3000, label:"¥3,000／枚",
+   icon:'<rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-8 8"/>'},
+  {id:"narration", name:"AIナレーション", type:"flag", min:3000, max:10000, label:"¥3,000〜10,000",
+   icon:'<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0014 0M12 18v3"/>'},
+  {id:"short", name:"ショート動画への再編集", type:"qty", unit:"本", min:5000, max:5000, open:true, label:"¥5,000／本〜",
+   icon:'<rect x="7" y="2" width="10" height="20" rx="2"/><path d="M11 9l3 2-3 2z"/>'},
   {group:"割増・追加料金"},
-  {id:"camera", name:"3カメラ以上の編集", type:"pct", pct:0.2, label:"基本料金の20％増"},
-  {id:"rush", name:"特急納品", type:"pct", pct:0.3, label:"基本料金の30％増"},
-  {id:"revise", name:"規定回数を超える修正", type:"qty", unit:"回", min:3000, max:3000, label:"¥3,000／回（各プランの無料回数を超えた分）"},
+  {id:"camera", name:"3カメラ以上の編集", type:"pct", pct:0.2, label:"基本料金の20％増",
+   icon:'<path d="M3 7h10a2 2 0 012 2v6a2 2 0 01-2 2H3zM15 11l6-3v8l-6-3"/>'},
+  {id:"rush", name:"特急納品", type:"pct", pct:0.3, label:"基本料金の30％増",
+   icon:'<path d="M13 2L4 14h7l-1 8 9-12h-7z"/>'},
+  {id:"revise", name:"規定回数を超える修正", type:"qty", unit:"回", min:3000, max:3000, label:"¥3,000／回（無料回数を超えた分）",
+   icon:'<path d="M3 12a9 9 0 0115.5-6.2L21 8M21 3v5h-5M21 12a9 9 0 01-15.5 6.2L3 16M3 21v-5h5"/>'},
   {group:"個別見積もり"},
-  {id:"shoot", name:"撮影サービス", type:"quote", label:"個別見積もり"},
-  {id:"anime", name:"高度なアニメーション制作", type:"quote", label:"個別見積もり"},
-  {id:"special", name:"その他特殊編集", type:"quote", label:"個別見積もり"},
+  {id:"shoot", name:"撮影サービス", type:"quote", label:"個別見積もり",
+   icon:'<path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/>'},
+  {id:"anime", name:"高度なアニメーション制作", type:"quote", label:"個別見積もり",
+   icon:'<path d="M12 3l9 5-9 5-9-5zM3 13l9 5 9-5"/>'},
+  {id:"special", name:"その他特殊編集", type:"quote", label:"個別見積もり",
+   icon:'<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 00.3 1.8l.1.1a2 2 0 11-2.8 2.8l-.1-.1a1.7 1.7 0 00-1.8-.3 1.7 1.7 0 00-1 1.5V21a2 2 0 01-4 0v-.1a1.7 1.7 0 00-1.1-1.5 1.7 1.7 0 00-1.8.3l-.1.1a2 2 0 11-2.8-2.8l.1-.1a1.7 1.7 0 00.3-1.8 1.7 1.7 0 00-1.5-1H3a2 2 0 010-4h.1a1.7 1.7 0 001.5-1.1 1.7 1.7 0 00-.3-1.8l-.1-.1a2 2 0 112.8-2.8l.1.1a1.7 1.7 0 001.8.3H9a1.7 1.7 0 001-1.5V3a2 2 0 014 0v.1a1.7 1.7 0 001 1.5 1.7 1.7 0 001.8-.3l.1-.1a2 2 0 112.8 2.8l-.1.1a1.7 1.7 0 00-.3 1.8V9a1.7 1.7 0 001.5 1H21a2 2 0 010 4h-.1a1.7 1.7 0 00-1.5 1z"/>'},
 ];
 
 const yen = v => "¥" + v.toLocaleString("ja-JP");
 const range = (a,b,open) => (a===b ? yen(a) : yen(a)+"〜"+b.toLocaleString("ja-JP")) + (open?"〜":"");
 const $ = id => document.getElementById(id);
-
 const state = {raw:60, fin:60, finTouched:false, plan:"standard", opt:{}};
+
+$("heroPrice").innerHTML = `${yen(PLANS[1].prices[1])}<small> / 完成30分</small>`;
 
 /* ---- step 1 ---- */
 const rawInput = $("raw");
 function setRaw(v){
   v = Math.max(1, Math.min(600, Math.round(Number(v)||1)));
   state.raw = v; rawInput.value = v;
-  if(!state.finTouched){ // 完成動画の長さを自動で合わせる（元の長さ以上の最小区分、上限は60分超）
-    state.fin = TIERS.find(t => t >= v) || 60;
-  }
+  if(!state.finTouched) state.fin = TIERS.find(t => t >= v) || 60; // 元の長さ以上の最小区分（上限60分）
   render();
 }
 rawInput.addEventListener("input", () => { if(rawInput.value!=="") setRaw(rawInput.value); });
@@ -250,42 +421,55 @@ rawInput.addEventListener("blur", () => setRaw(rawInput.value));
 $("rawMinus").onclick = () => setRaw(state.raw - 10);
 $("rawPlus").onclick = () => setRaw(state.raw + 10);
 [30,45,60,90,120].forEach(m=>{
-  const b=document.createElement("button"); b.type="button"; b.className="chip"; b.textContent=m+"分";
+  const b=document.createElement("button"); b.type="button"; b.className="pill"; b.dataset.v=m; b.textContent=m+"分";
   b.onclick=()=>setRaw(m); $("rawChips").appendChild(b);
 });
 
 /* ---- step 2 ---- */
-const finOpts = [...TIERS.map(t=>({v:t,l:"〜"+t+"分"})), {v:999,l:"60分を超える"}];
-finOpts.forEach(o=>{
-  const b=document.createElement("button"); b.type="button"; b.className="chip"; b.textContent=o.l; b.dataset.v=o.v;
+[...TIERS.map(t=>({v:t,b:t,s:"分まで"})), {v:999,b:"60+",s:"分超"}].forEach(o=>{
+  const b=document.createElement("button"); b.type="button"; b.dataset.v=o.v;
+  b.innerHTML=`<b class="num-font">${o.b}</b><small>${o.s}</small>`;
+  b.setAttribute("aria-label", o.v===999 ? "60分を超える" : `${o.v}分まで`);
   b.onclick=()=>{ state.fin=o.v; state.finTouched=true; render(); };
   $("finChips").appendChild(b);
 });
 
 /* ---- step 3 ---- */
 PLANS.forEach(p=>{
-  const l=document.createElement("label"); l.className="plan"+(p.recommend?" std":""); l.dataset.id=p.id;
+  const l=document.createElement("label"); l.className="plan"; l.dataset.id=p.id;
   l.innerHTML = (p.recommend?'<span class="badge">おすすめ</span>':'') +
-    `<input type="radio" name="plan" value="${p.id}"><div class="nm">${p.name}</div>
-     <div class="pr"><span class="pv"></span> <small class="pt"></small></div>
+    `<input type="radio" name="plan" value="${p.id}"><span class="check"></span>
+     <span class="ic">${p.icon}</span><span class="en">${p.en}</span><span class="nm">${p.name}</span>
+     <span class="cc">${p.copy}</span>
+     <span class="pr num-font"><span class="pv"></span><small class="pt"></small></span>
      <ul>${p.items.map(i=>`<li>${i}</li>`).join("")}</ul>`;
   l.querySelector("input").onchange=()=>{state.plan=p.id; render();};
   $("plans").appendChild(l);
 });
 
 /* ---- step 4 ---- */
+let tiles=null;
 OPTIONS.forEach(o=>{
-  if(o.group){ const g=document.createElement("div"); g.className="group"; g.textContent=o.group; $("opts").appendChild(g); return; }
-  const d=document.createElement("div"); d.className="opt";
-  const cid="o_"+o.id;
-  let right="";
-  if(o.type==="qty") right=`<div class="q"><input type="number" min="1" max="99" value="1" id="${cid}_n" aria-label="${o.name}の${o.unit}数" disabled><span>${o.unit}</span></div>`;
-  d.innerHTML=`<label class="l" for="${cid}"><input type="checkbox" id="${cid}"><span><span class="nm">${o.name}</span><br><span class="pr">${o.label}</span></span></label>${right}`;
-  $("opts").appendChild(d);
-  const cb=d.querySelector("#"+cid), n=d.querySelector("#"+cid+"_n");
+  if(o.group){
+    const g=document.createElement("div"); g.className="ogroup";
+    g.innerHTML=`<h3>${o.group}</h3><div class="otiles"></div>`; $("opts").appendChild(g);
+    tiles=g.querySelector(".otiles"); return;
+  }
   state.opt[o.id]={on:false,n:1};
-  cb.onchange=()=>{ state.opt[o.id].on=cb.checked; if(n) n.disabled=!cb.checked; render(); };
-  if(n) n.addEventListener("input",()=>{ state.opt[o.id].n=Math.max(1,Math.min(99,Number(n.value)||1)); render(); });
+  const cid="o_"+o.id;
+  const d=document.createElement("label"); d.className="ot"; d.htmlFor=cid;
+  d.innerHTML=`<span class="oi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${o.icon}</svg></span>
+    <span class="tx"><span class="nm">${o.name}</span><br><span class="pr">${o.label}</span>
+      ${o.type==="qty"?`<span class="qty" hidden><button type="button" data-d="-1" aria-label="${o.name}を減らす">−</button><output id="${cid}_n">1</output><span>${o.unit}</span><button type="button" data-d="1" aria-label="${o.name}を増やす">＋</button></span>`:""}
+    </span>
+    <span class="sw"><input type="checkbox" id="${cid}" aria-label="${o.name}"><span></span></span>`;
+  tiles.appendChild(d);
+  const cb=d.querySelector("#"+cid), q=d.querySelector(".qty");
+  cb.onchange=()=>{ state.opt[o.id].on=cb.checked; d.classList.toggle("on",cb.checked); if(q) q.hidden=!cb.checked; render(); };
+  if(q) q.querySelectorAll("button").forEach(bt=>bt.onclick=e=>{
+    e.preventDefault(); const s=state.opt[o.id]; s.n=Math.max(1,Math.min(99,s.n+Number(bt.dataset.d)));
+    q.querySelector("output").textContent=s.n; render();
+  });
 });
 
 /* ---- 計算 ---- */
@@ -295,88 +479,127 @@ function calc(){
   const tierIdx=TIERS.indexOf(state.fin);
   if(tierIdx<0){
     quote=true;
-    lines.push({l:`${plan.name}（完成60分超）`, v:"個別見積もり"});
+    lines.push({l:`${plan.name}（完成60分超）`, v:"個別見積もり", base:true});
     warns.push("完成動画が60分を超える場合は、個別にお見積もりします。");
   }else{
     const base=plan.prices[tierIdx];
-    lines.push({l:`${plan.name}プラン（完成${state.fin}分）`, v:yen(base)}); lo+=base; hi+=base;
-    // 元素材の超過
-    const cap=state.fin*CAP_RATIO, over=state.raw-cap;
+    lines.push({l:`${plan.name}プラン（完成${state.fin}分）`, v:yen(base), base:true}); lo+=base; hi+=base;
+    const over=state.raw-state.fin*CAP_RATIO;
     if(over>0){
-      const units=Math.ceil(over/OVER_UNIT_MIN), v=units*OVER_UNIT_YEN;
-      lines.push({l:`元素材の超過分（${Math.ceil(over)}分超過）`, v:yen(v)+"〜"}); lo+=v; hi+=v; open=true;
+      const v=Math.ceil(over/OVER_UNIT_MIN)*OVER_UNIT_YEN;
+      lines.push({l:`元素材の超過分（${Math.ceil(over)}分）`, v:yen(v)+"〜"}); lo+=v; hi+=v; open=true;
     }
-    if(state.raw < state.fin){
-      warns.push("元の動画より完成動画が長くなっています。長さをご確認ください。");
-    }
-    // 割増（基本料金に対する％）
+    if(state.raw < state.fin) warns.push("元の動画より完成動画が長くなっています。長さをご確認ください。");
     OPTIONS.filter(o=>o.type==="pct" && state.opt[o.id].on).forEach(o=>{
-      const v=Math.round(base*o.pct); lines.push({l:`${o.name}（${o.label}）`, v:yen(v)}); lo+=v; hi+=v;
+      const v=Math.round(base*o.pct); lines.push({l:`${o.name}（${Math.round(o.pct*100)}％増）`, v:yen(v)}); lo+=v; hi+=v;
     });
   }
   OPTIONS.forEach(o=>{
     if(o.group||o.type==="pct") return;
     const s=state.opt[o.id]; if(!s.on) return;
     if(o.type==="quote"){ quote=true; lines.push({l:o.name, v:"個別見積もり"}); return; }
-    let a,b,lab=o.name,op=!!o.open;
-    if(o.type==="qty"){ a=o.min*s.n; b=o.max*s.n; lab+=`（${s.n}${o.unit}）`; }
-    else { a=o.min; b=o.max; }
-    lo+=a; hi+=b; if(op) open=true;
-    lines.push({l:lab, v:range(a,b,op)});
+    let a=o.min, b=o.max, lab=o.name;
+    if(o.type==="qty"){ a*=s.n; b*=s.n; lab+=`（${s.n}${o.unit}）`; }
+    lo+=a; hi+=b; if(o.open) open=true;
+    lines.push({l:lab, v:range(a,b,o.open)});
   });
   if(tierIdx<0 && OPTIONS.some(o=>o.type==="pct" && state.opt[o.id].on))
     warns.push("割増料金は、お見積もりの基本料金をもとに計算します。");
-  if(quote) warns.push("「個別見積もり」の項目は合計に含まれていません。");
-  return {lines,warns,lo,hi,open,quote};
+  if(quote && lo>0) warns.push("「個別見積もり」の項目は合計に含まれていません。");
+  return {lines,warns,lo,hi,open,quote,plan};
+}
+
+/* ---- 数字のアニメーション ---- */
+let shown={lo:0,hi:0}, raf=null;
+function animateTo(r){
+  if(raf) cancelAnimationFrame(raf);
+  const from={...shown}, t0=performance.now(), dur=380;
+  const reduce=window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const step=now=>{
+    const k=reduce?1:Math.min(1,(now-t0)/dur), e=1-Math.pow(1-k,3);
+    const lo=Math.round(from.lo+(r.lo-from.lo)*e), hi=Math.round(from.hi+(r.hi-from.hi)*e);
+    paintTotal(r,lo,hi);
+    if(k<1) raf=requestAnimationFrame(step); else shown={lo:r.lo,hi:r.hi};
+  };
+  raf=requestAnimationFrame(step);
+}
+function totalHTML(r,lo,hi){
+  if(r.lo===0 && r.quote) return "個別見積もり";
+  return (r.lo===r.hi ? yen(lo) : `${yen(lo)}<small> 〜 </small>${yen(hi)}`) + (r.open?"<small>〜</small>":"");
+}
+function paintTotal(r,lo,hi){
+  const h=totalHTML(r,lo,hi); $("total").innerHTML=h; $("mtotal").innerHTML=h;
+  $("total").classList.toggle("quote", r.lo===0 && r.quote);
 }
 
 /* ---- 表示 ---- */
 function render(){
   rawInput.value=state.raw;
-  document.querySelectorAll("#finChips .chip").forEach(b=>b.setAttribute("aria-pressed", String(Number(b.dataset.v)===state.fin)));
-  $("capHint").textContent = state.fin===999
-    ? "60分を超える完成動画は個別見積もりです。"
-    : `元の動画は、完成動画の1.5倍（${state.fin*CAP_RATIO}分）まで基本料金に含まれます。超えた分は30分ごとに¥5,000〜です。`;
+  document.querySelectorAll("#rawChips .pill").forEach(b=>b.setAttribute("aria-pressed", String(Number(b.dataset.v)===state.raw)));
+  document.querySelectorAll("#finChips button").forEach(b=>b.setAttribute("aria-pressed", String(Number(b.dataset.v)===state.fin)));
+  // meter
+  if(state.fin===999){
+    $("meter").style.display="none";
+  }else{
+    $("meter").style.display="";
+    const cap=state.fin*CAP_RATIO, scale=Math.max(state.raw,cap)*1.1;
+    const within=Math.min(state.raw,cap), over=Math.max(0,state.raw-cap);
+    $("meterFill").style.width=(within/scale*100)+"%";
+    $("meterOver").style.left=(cap/scale*100)+"%"; $("meterOver").style.width=(over/scale*100)+"%";
+    $("meterRaw").textContent=state.raw+"分"; $("meterCap").textContent=cap+"分";
+    const m=$("meterMsg");
+    if(over>0){ m.className="msg ng"; m.textContent=`上限を${Math.ceil(over)}分超えています（30分ごとに¥5,000〜を加算）`; }
+    else { m.className="msg ok"; m.textContent="元の動画の長さは、基本料金の範囲内です"; }
+  }
   const ti=TIERS.indexOf(state.fin);
-  document.querySelectorAll("label.plan").forEach(l=>{
-    const p=PLANS.find(x=>x.id===l.dataset.id);
-    l.classList.toggle("sel", p.id===state.plan); l.querySelector("input").checked = p.id===state.plan;
+  document.querySelectorAll(".plan").forEach(l=>{
+    const p=PLANS.find(x=>x.id===l.dataset.id), on=p.id===state.plan;
+    l.classList.toggle("sel", on); l.querySelector("input").checked=on;
     l.querySelector(".pv").textContent = ti<0 ? "個別見積もり" : yen(p.prices[ti]);
-    l.querySelector(".pt").textContent = ti<0 ? "" : `／完成${state.fin}分`;
+    l.querySelector(".pt").textContent = ti<0 ? "" : `/ 完成${state.fin}分`;
   });
   const r=calc();
-  $("lines").innerHTML = r.lines.map(x=>`<li><span>${x.l}</span><span>${x.v}</span></li>`).join("");
-  let t;
-  if(r.lo===0 && r.quote) t="個別見積もり";
-  else t = (r.lo===r.hi ? yen(r.lo) : yen(r.lo)+"<small> 〜 </small>"+yen(r.hi)) + (r.open?"<small>〜</small>":"");
-  $("total").innerHTML=t; $("mtotal").innerHTML=t;
-  $("warns").innerHTML=r.warns.map(w=>`<div class="warn">${w}</div>`).join("");
+  $("sumLine").textContent = `元の動画 ${state.raw}分 → 完成 ${state.fin===999?"60分超":state.fin+"分"}｜${r.plan.name}`;
+  $("lines").innerHTML = r.lines.map(x=>`<li class="${x.base?'base':''}"><span>${x.l}</span><span class="num-font">${x.v}</span></li>`).join("");
+  $("warns").innerHTML = r.warns.map(w=>`<div class="warn">${w}</div>`).join("");
+  $("tag").textContent = r.open ? "概算（内容により増える項目あり）" : "概算";
+  animateTo(r);
 }
+
+/* ---- コピー ---- */
+function toast(msg){ const t=$("toast"); t.textContent=msg; t.classList.add("show"); setTimeout(()=>t.classList.remove("show"),2200); }
+$("copyBtn").onclick=async()=>{
+  const r=calc();
+  const txt=["【メディクリ 動画編集の料金めやす】",
+    `元の動画：${state.raw}分 / 完成動画：${state.fin===999?"60分超":state.fin+"分"}`,
+    ...r.lines.map(x=>`・${x.l}：${x.v}`),
+    `合計（めやす）：${totalHTML(r,r.lo,r.hi).replace(/<[^>]+>/g,"")}`,
+    "※表示金額は概算です。正式な料金はお見積もりにてご提示します。"].join("\n");
+  try{ await navigator.clipboard.writeText(txt); toast("内容をコピーしました。メールなどに貼り付けてご相談ください。"); }
+  catch(e){ window.prompt("以下をコピーしてください", txt); }
+};
 
 /* ---- 料金一覧 ---- */
 function buildList(){
-  const head = `<tr><th class="l">プラン</th><th>内容</th>${TIERS.map(t=>`<th class="${t===30?'col30':''}">${t}分</th>`).join("")}</tr>`;
-  const adds = {light:"基本料金", standard:"＋カット・テロップ", premium:"＋図解・演出"};
-  const body = PLANS.map(p=>`<tr class="${p.recommend?'std':''}"><td class="l">${p.name}${p.recommend?'（おすすめ）':''}</td><td>${adds[p.id]}</td>${p.prices.map((v,i)=>`<td class="${TIERS[i]===30?'col30':''}">${yen(v)}</td>`).join("")}</tr>`).join("");
+  const adds={light:"基本料金", standard:"＋カット・フルテロップ", premium:"＋図解・演出"};
+  const head=`<thead><tr><th class="l">プラン</th><th>内容</th>${TIERS.map(t=>`<th class="${t===30?'c30':''}">${t}分</th>`).join("")}</tr></thead>`;
+  const body=PLANS.map(p=>`<tr class="${p.recommend?'std':''}"><td class="l"><span class="pn">${p.name}</span>${p.recommend?'<span class="rb">おすすめ</span>':''}</td><td>${adds[p.id]}</td>${p.prices.map((v,i)=>`<td class="p num-font ${TIERS[i]===30?'c30':''}">${yen(v)}</td>`).join("")}</tr>`).join("");
   const groups=[]; OPTIONS.forEach(o=>{ if(o.group) groups.push({h:o.group,items:[]}); else groups[groups.length-1].items.push(o); });
-  const optTable = g => `<div class="tbl-scroll"><table><tr><th colspan="2">${g.h}</th></tr>${g.items.map(o=>`<tr><td class="l">${o.name}</td><td class="r">${o.type==="qty"&&o.id==="revise"?"¥3,000／回":o.label}</td></tr>`).join("")}${g.h==="割増・追加料金"?'<tr><td class="l">元素材の超過分（完成動画の1.5倍超）</td><td class="r">¥5,000／30分〜</td></tr>':''}</table></div>`;
-  $("listBody").innerHTML = `
+  const optTable=g=>`<div class="tbl gh"><table><thead><tr><th colspan="2">${g.h}</th></tr></thead><tbody>${g.items.map(o=>`<tr><td class="l">${o.name}</td><td class="r">${o.id==="revise"?"¥3,000／回":o.label}</td></tr>`).join("")}${g.h==="割増・追加料金"?'<tr><td class="l">元素材の超過分（完成動画の1.5倍超）</td><td class="r">¥5,000／30分〜</td></tr>':''}</tbody></table></div>`;
+  $("listBody").innerHTML=`
     <h3>基本料金（完成動画の長さ別）</h3>
-    <div class="tbl-scroll"><table>${head}${body}
+    <div class="tbl"><table>${head}<tbody>${body}
       <tr><td class="l" colspan="2">撮影を含む動画制作</td><td colspan="4">個別見積もり</td></tr>
-      <tr><td class="l" colspan="2">60分を超える動画・特殊な編集</td><td colspan="4">個別見積もり</td></tr></table></div>
+      <tr><td class="l" colspan="2">60分を超える動画・特殊な編集</td><td colspan="4">個別見積もり</td></tr></tbody></table></div>
     <h3>オプション（めやす）</h3>
-    <div class="two">
-      <div>${optTable(groups[0])}<div style="height:14px"></div>${optTable(groups[2])}</div>
-      <div>${optTable(groups[1])}</div>
-    </div>
-    <p class="note">フルテロップはスタンダード以上、オリジナル図解・イラスト作成とPowerPointなどの資料挿入はプレミアムに含まれます。</p>
+    <div class="two"><div class="stack">${optTable(groups[0])}${optTable(groups[2])}</div><div class="stack">${optTable(groups[1])}</div></div>
+    <p class="dl-note">フルテロップはスタンダード以上、オリジナル図解・イラスト作成とPowerPointなどの資料挿入はプレミアムに含まれます。</p>
     <h3>料金適用条件</h3>
     <ul>
       <li>基本料金は完成動画の長さを基準とします。</li>
       <li>元の動画（素材）は、完成動画の1.5倍の長さまで基本料金に含みます。超えた時間は30分ごとに¥5,000〜となります（例：完成30分・素材70分 → 超過25分 → ¥5,000）。</li>
       <li>撮影済みの動画素材をご提供いただくことを前提とします。3カメラ以上の編集は基本料金の20％増となります。</li>
-      <li>フルテロップはスタンダード以上、図解・イラスト作成と資料挿入はプレミアムに含まれます。高度なアニメーションや3DCGは別途お見積もりとなります。</li>
+      <li>高度なアニメーションや3DCGは別途お見積もりとなります。</li>
       <li>各プランの規定回数（ライト1回・スタンダード2回・プレミアム3回）を超える修正は、1回¥3,000となります。</li>
       <li>撮影費用、交通費、特殊な有料素材の購入費用は別途となります。納期は動画の長さや編集内容によって異なります。</li>
       <li>オプション料金はめやすです。正式な料金は、ご依頼内容を確認したうえでお見積もりを提示します。</li>
@@ -388,7 +611,8 @@ function openList(){ if(typeof dlg.showModal==="function") dlg.showModal(); else
 function closeList(){ dlg.close ? dlg.close() : dlg.removeAttribute("open"); }
 dlg.addEventListener("close",()=>{ if(location.hash==="#prices") history.replaceState(null,"",location.pathname+location.search); });
 dlg.addEventListener("click",e=>{ if(e.target===dlg) closeList(); });
-$("openList").onclick=openList; $("openList2").onclick=openList; $("closeList").onclick=closeList;
+document.querySelectorAll("[data-open-list]").forEach(b=>b.onclick=openList);
+$("closeList").onclick=closeList;
 
 setRaw(60);
 if(location.hash==="#prices") openList();

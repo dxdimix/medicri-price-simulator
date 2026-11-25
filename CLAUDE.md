@@ -9,6 +9,7 @@
 - GitHub Pages（静的サイト。サーバー処理・データベースなし）
 - 公開URL: https://dxdimix.github.io/medicri-price-simulator/
 - ローカル: C:\Users\sike1\dev\medicri-price-simulator\index.html をブラウザで開けば動く
+- 画像: assets/（メディクリ・DimiXのロゴ）
 
 ## 料金の変更方法
 `index.html` の `<script>` 冒頭「料金データ」部分（TIERS / CAP_RATIO / PLANS / OPTIONS）だけを書き換える。
