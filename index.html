@@ -161,7 +161,7 @@
       <section class="step">
         <h2><span class="num">4</span>オプション</h2>
         <div class="opts" id="opts"></div>
-        <p class="hint">オプションは、各プランの標準サービスの範囲を超える作業に適用します。上位プランに含まれる作業を重ねてご請求することはありません。</p>
+        <p class="hint">フルテロップはスタンダード以上、オリジナル図解・イラスト作成と資料挿入はプレミアムに含まれます。必要な場合はプランでお選びください。</p>
       </section>
     </div>
 
@@ -208,25 +208,22 @@ const PLANS = [
   {id:"light", name:"ライト", prices:[6000,10000,14000,18000],
    items:["前後カット・動画の結合","音量・明るさ調整","タイトル挿入","修正対応1回"]},
   {id:"standard", name:"スタンダード", prices:[20000,40000,50000,65000], recommend:true,
-   items:["ライトの全内容","詳細カット・ノイズ除去","要点テロップ（校正込み）","BGM・修正対応2回"]},
+   items:["ライトの全内容","詳細カット・ノイズ除去","フルテロップ（校正込み）","BGM・修正対応2回"]},
   {id:"premium", name:"プレミアム", prices:[35000,60000,85000,110000],
-   items:["スタンダードの全内容","画像・簡易図解・資料の挿入","アニメーション・演出","修正対応3回"]},
+   items:["スタンダードの全内容","図解・イラスト作成","資料挿入・アニメーション","修正対応3回"]},
 ];
-/* type: perMin=完成動画1分あたり, qty=数量, flag=あり/なし, camera, rush, quote=個別見積もり
+/* type: qty=数量, flag=あり/なし, pct=基本料金の割増, quote=個別見積もり
    min/max: 単価の幅。open:true は「〜」（上限なし） */
 const OPTIONS = [
-  {group:"字幕・デザイン"},
-  {id:"fulltelop", name:"フルテロップ・全文字幕", type:"perMin", min:500, max:1000, label:"¥500〜1,000／完成動画1分"},
-  {id:"figure", name:"オリジナル図解・イラスト作成", type:"qty", unit:"枚", min:2000, max:5000, label:"¥2,000〜5,000／枚"},
-  {id:"slides", name:"PowerPointなどの資料追加挿入", type:"qty", unit:"枚", min:300, max:500, label:"¥300〜500／枚"},
+  {group:"追加制作"},
   {id:"thumb", name:"サムネイル作成", type:"qty", unit:"枚", min:3000, max:3000, label:"¥3,000／枚"},
   {id:"narration", name:"AIナレーション", type:"flag", min:3000, max:10000, label:"¥3,000〜10,000"},
   {id:"short", name:"ショート動画への再編集", type:"qty", unit:"本", min:5000, max:5000, open:true, label:"¥5,000／本〜"},
-  {id:"mosaic", name:"モザイク・個人情報保護処理", type:"flag", min:3000, max:3000, open:true, label:"¥3,000〜"},
-  {group:"編集・進行"},
-  {id:"camera", name:"複数カメラの編集", type:"camera", label:"2カメラ ¥5,000〜15,000／3カメラ以上 ¥10,000〜"},
-  {id:"revise", name:"規定回数を超える修正", type:"qty", unit:"回", min:3000, max:3000, open:true, label:"¥3,000／回〜"},
-  {id:"rush", name:"特急納品", type:"rush", label:"基本料金の30％増"},
+  {group:"割増・追加料金"},
+  {id:"camera", name:"3カメラ以上の編集", type:"pct", pct:0.2, label:"基本料金の20％増"},
+  {id:"rush", name:"特急納品", type:"pct", pct:0.3, label:"基本料金の30％増"},
+  {id:"revise", name:"規定回数を超える修正", type:"qty", unit:"回", min:3000, max:3000, label:"¥3,000／回（各プランの無料回数を超えた分）"},
+  {group:"個別見積もり"},
   {id:"shoot", name:"撮影サービス", type:"quote", label:"個別見積もり"},
   {id:"anime", name:"高度なアニメーション制作", type:"quote", label:"個別見積もり"},
   {id:"special", name:"その他特殊編集", type:"quote", label:"個別見積もり"},
@@ -283,11 +280,10 @@ OPTIONS.forEach(o=>{
   const cid="o_"+o.id;
   let right="";
   if(o.type==="qty") right=`<div class="q"><input type="number" min="1" max="99" value="1" id="${cid}_n" aria-label="${o.name}の${o.unit}数" disabled><span>${o.unit}</span></div>`;
-  if(o.type==="camera") right=`<select id="${cid}_n" aria-label="カメラ台数" disabled><option value="2">2カメラ</option><option value="3">3カメラ以上</option></select>`;
   d.innerHTML=`<label class="l" for="${cid}"><input type="checkbox" id="${cid}"><span><span class="nm">${o.name}</span><br><span class="pr">${o.label}</span></span></label>${right}`;
   $("opts").appendChild(d);
   const cb=d.querySelector("#"+cid), n=d.querySelector("#"+cid+"_n");
-  state.opt[o.id]={on:false,n:o.type==="camera"?2:1};
+  state.opt[o.id]={on:false,n:1};
   cb.onchange=()=>{ state.opt[o.id].on=cb.checked; if(n) n.disabled=!cb.checked; render(); };
   if(n) n.addEventListener("input",()=>{ state.opt[o.id].n=Math.max(1,Math.min(99,Number(n.value)||1)); render(); });
 });
@@ -313,26 +309,23 @@ function calc(){
     if(state.raw < state.fin){
       warns.push("元の動画より完成動画が長くなっています。長さをご確認ください。");
     }
-    // 特急（基本料金の30%）
-    if(state.opt.rush.on){ const v=Math.round(base*0.3); lines.push({l:"特急納品（基本料金の30％）", v:yen(v)}); lo+=v; hi+=v; }
+    // 割増（基本料金に対する％）
+    OPTIONS.filter(o=>o.type==="pct" && state.opt[o.id].on).forEach(o=>{
+      const v=Math.round(base*o.pct); lines.push({l:`${o.name}（${o.label}）`, v:yen(v)}); lo+=v; hi+=v;
+    });
   }
-  const finMin = tierIdx<0 ? null : state.fin;
   OPTIONS.forEach(o=>{
-    if(o.group||o.type==="rush") return;
+    if(o.group||o.type==="pct") return;
     const s=state.opt[o.id]; if(!s.on) return;
     if(o.type==="quote"){ quote=true; lines.push({l:o.name, v:"個別見積もり"}); return; }
     let a,b,lab=o.name,op=!!o.open;
-    if(o.type==="perMin"){
-      if(finMin===null){ quote=true; lines.push({l:o.name, v:"個別見積もり"}); return; }
-      a=o.min*finMin; b=o.max*finMin; lab+=`（${finMin}分）`;
-    }else if(o.type==="qty"){ a=o.min*s.n; b=o.max*s.n; lab+=`（${s.n}${o.unit}）`; }
-    else if(o.type==="camera"){ if(s.n==2){a=5000;b=15000;lab="2カメラ編集";}else{a=10000;b=10000;op=true;lab="3カメラ以上の編集";} }
+    if(o.type==="qty"){ a=o.min*s.n; b=o.max*s.n; lab+=`（${s.n}${o.unit}）`; }
     else { a=o.min; b=o.max; }
     lo+=a; hi+=b; if(op) open=true;
     lines.push({l:lab, v:range(a,b,op)});
   });
-  if(state.plan==="premium" && (state.opt.figure.on||state.opt.slides.on))
-    warns.push("プレミアムには簡易図解・提供資料の挿入が含まれます。オプションは、それを超える追加分のめやすです。");
+  if(tierIdx<0 && OPTIONS.some(o=>o.type==="pct" && state.opt[o.id].on))
+    warns.push("割増料金は、お見積もりの基本料金をもとに計算します。");
   if(quote) warns.push("「個別見積もり」の項目は合計に含まれていません。");
   return {lines,warns,lo,hi,open,quote};
 }
@@ -365,12 +358,8 @@ function buildList(){
   const head = `<tr><th class="l">プラン</th><th>内容</th>${TIERS.map(t=>`<th class="${t===30?'col30':''}">${t}分</th>`).join("")}</tr>`;
   const adds = {light:"基本料金", standard:"＋カット・テロップ", premium:"＋図解・演出"};
   const body = PLANS.map(p=>`<tr class="${p.recommend?'std':''}"><td class="l">${p.name}${p.recommend?'（おすすめ）':''}</td><td>${adds[p.id]}</td>${p.prices.map((v,i)=>`<td class="${TIERS[i]===30?'col30':''}">${yen(v)}</td>`).join("")}</tr>`).join("");
-  const optRows = grp => OPTIONS.slice(grp[0],grp[1]).filter(o=>!o.group).map(o=>{
-    let lab=o.label;
-    if(o.type==="camera") return `<tr><td class="l">2カメラ編集</td><td class="r">¥5,000〜15,000</td></tr><tr><td class="l">3カメラ以上の編集</td><td class="r">¥10,000〜</td></tr>`;
-    return `<tr><td class="l">${o.name}</td><td class="r">${lab}</td></tr>`;
-  }).join("");
-  const gi = OPTIONS.findIndex((o,i)=>i>0&&o.group);
+  const groups=[]; OPTIONS.forEach(o=>{ if(o.group) groups.push({h:o.group,items:[]}); else groups[groups.length-1].items.push(o); });
+  const optTable = g => `<div class="tbl-scroll"><table><tr><th colspan="2">${g.h}</th></tr>${g.items.map(o=>`<tr><td class="l">${o.name}</td><td class="r">${o.type==="qty"&&o.id==="revise"?"¥3,000／回":o.label}</td></tr>`).join("")}${g.h==="割増・追加料金"?'<tr><td class="l">元素材の超過分（完成動画の1.5倍超）</td><td class="r">¥5,000／30分〜</td></tr>':''}</table></div>`;
   $("listBody").innerHTML = `
     <h3>基本料金（完成動画の長さ別）</h3>
     <div class="tbl-scroll"><table>${head}${body}
@@ -378,16 +367,17 @@ function buildList(){
       <tr><td class="l" colspan="2">60分を超える動画・特殊な編集</td><td colspan="4">個別見積もり</td></tr></table></div>
     <h3>オプション（めやす）</h3>
     <div class="two">
-      <div class="tbl-scroll"><table><tr><th colspan="2">字幕・デザイン</th></tr>${optRows([1,gi])}</table></div>
-      <div class="tbl-scroll"><table><tr><th colspan="2">編集・進行</th></tr>${optRows([gi+1,OPTIONS.length])}
-        <tr><td class="l">元素材の超過分（完成動画の1.5倍超）</td><td class="r">¥5,000／30分〜</td></tr></table></div>
+      <div>${optTable(groups[0])}<div style="height:14px"></div>${optTable(groups[2])}</div>
+      <div>${optTable(groups[1])}</div>
     </div>
+    <p class="note">フルテロップはスタンダード以上、オリジナル図解・イラスト作成とPowerPointなどの資料挿入はプレミアムに含まれます。</p>
     <h3>料金適用条件</h3>
     <ul>
       <li>基本料金は完成動画の長さを基準とします。</li>
       <li>元の動画（素材）は、完成動画の1.5倍の長さまで基本料金に含みます。超えた時間は30分ごとに¥5,000〜となります（例：完成30分・素材70分 → 超過25分 → ¥5,000）。</li>
-      <li>撮影済みの動画素材をご提供いただくことを前提とします。ファイル数やカメラ台数が多い場合は追加料金が発生することがあります。</li>
-      <li>フルテロップ、複雑な図解やアニメーションは別途となります。規定回数を超える修正には追加料金が発生します。</li>
+      <li>撮影済みの動画素材をご提供いただくことを前提とします。3カメラ以上の編集は基本料金の20％増となります。</li>
+      <li>フルテロップはスタンダード以上、図解・イラスト作成と資料挿入はプレミアムに含まれます。高度なアニメーションや3DCGは別途お見積もりとなります。</li>
+      <li>各プランの規定回数（ライト1回・スタンダード2回・プレミアム3回）を超える修正は、1回¥3,000となります。</li>
       <li>撮影費用、交通費、特殊な有料素材の購入費用は別途となります。納期は動画の長さや編集内容によって異なります。</li>
       <li>オプション料金はめやすです。正式な料金は、ご依頼内容を確認したうえでお見積もりを提示します。</li>
     </ul>`;
