@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>メディクリ 動画編集 料金シミュレーター</title>
+<meta name="description" content="メディクリ（DimiX）の動画編集の料金を、元の動画の長さとプラン・オプションから概算できます。">
+<link rel="icon" href="logo_medicri.png">
+<style>
+  :root{
+    --text:#373737; --sub:#7a7a7a; --line:#e6e6e6; --gray:#e3e1de; --card:#f7f6f4;
+    --orange:#ff914d; --orange-bg:#fff3eb; --yellow:#ffde59; --blue:#1458d6;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;color:var(--text);background:#fff;
+    font-family:"Hiragino Sans","Hiragino Kaku Gothic ProN","Noto Sans JP","Yu Gothic","Meiryo",sans-serif;
+    line-height:1.6;-webkit-font-smoothing:antialiased}
+  a{color:inherit}
+  header{border-bottom:1px solid var(--line)}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 20px}
+  .head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 0}
+  .brand{display:flex;align-items:center;gap:12px}
+  .brand img{height:52px}
+  .brand .t{font-weight:700;font-size:15px;line-height:1.3}
+  .brand .t small{display:block;font-weight:400;color:var(--sub);font-size:12px}
+  .btn{appearance:none;border:1px solid var(--text);background:#fff;color:var(--text);border-radius:999px;
+    padding:9px 18px;font:inherit;font-size:14px;font-weight:700;cursor:pointer;white-space:nowrap}
+  .btn:hover{background:var(--text);color:#fff}
+  .btn:focus-visible,input:focus-visible,select:focus-visible,label.plan:focus-within{outline:3px solid var(--yellow);outline-offset:2px}
+  h1{font-size:24px;margin:28px 0 4px}
+  .lead{color:var(--sub);margin:0 0 24px;font-size:14px}
+  .grid{display:grid;grid-template-columns:1fr 340px;gap:28px;align-items:start}
+  @media (max-width:860px){.grid{grid-template-columns:1fr}}
+  section.step{margin-bottom:28px}
+  .step h2{font-size:16px;margin:0 0 10px;display:flex;align-items:center;gap:10px}
+  .num{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:50%;background:var(--text);color:#fff;font-size:13px;flex:none}
+  .hint{color:var(--sub);font-size:12.5px;margin:6px 0 0}
+  .row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+  .minutes{display:flex;align-items:center;border:1px solid #cdcdcd;border-radius:10px;overflow:hidden}
+  .minutes button{border:0;background:var(--card);width:44px;height:46px;font-size:20px;cursor:pointer;color:var(--text)}
+  .minutes input{width:90px;height:46px;border:0;text-align:center;font-size:20px;font-weight:700;color:var(--text)}
+  .unit{font-weight:700}
+  .chips{display:flex;flex-wrap:wrap;gap:8px}
+  .chip{border:1px solid #cdcdcd;background:#fff;border-radius:999px;padding:6px 14px;font:inherit;font-size:13px;cursor:pointer;color:var(--text)}
+  .chip[aria-pressed="true"]{background:var(--text);border-color:var(--text);color:#fff}
+  .plans{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+  @media (max-width:600px){.plans{grid-template-columns:1fr}}
+  label.plan{position:relative;display:block;border:1px solid #cdcdcd;border-radius:12px;padding:16px 14px 14px;cursor:pointer;background:#fff}
+  label.plan input{position:absolute;opacity:0;pointer-events:none}
+  label.plan .nm{font-weight:700;font-size:16px}
+  label.plan .pr{font-weight:700;font-size:20px;margin:2px 0 6px}
+  label.plan .pr small{font-size:12px;color:var(--sub);font-weight:400}
+  label.plan ul{margin:0;padding-left:1.1em;font-size:12.5px;color:var(--text)}
+  label.plan.sel{border:2px solid var(--text);padding:15px 13px 13px;background:var(--card)}
+  label.plan.std.sel{border-color:var(--orange);background:var(--orange-bg)}
+  label.plan.std .pr{color:var(--orange)}
+  .badge{position:absolute;top:-11px;left:50%;transform:translateX(-50%);background:var(--orange);color:#fff;font-size:11.5px;font-weight:700;border-radius:999px;padding:2px 12px}
+  .opts{border:1px solid var(--line);border-radius:12px;overflow:hidden}
+  .opt{display:grid;grid-template-columns:1fr auto;gap:8px 14px;align-items:center;padding:12px 14px;border-top:1px solid var(--line)}
+  .opt:first-child{border-top:0}
+  .opt .l{display:flex;gap:10px;align-items:flex-start}
+  .opt input[type=checkbox]{width:20px;height:20px;margin:2px 0 0;accent-color:var(--text);flex:none}
+  .opt .nm{font-weight:700;font-size:14px}
+  .opt .pr{font-size:12.5px;color:var(--sub)}
+  .opt .q{display:flex;align-items:center;gap:6px;font-size:13px}
+  .opt .q input{width:64px;height:36px;border:1px solid #cdcdcd;border-radius:8px;text-align:center;font-size:15px}
+  .opt .q input:disabled{background:#f2f2f2;color:#aaa}
+  .opt select{height:36px;border:1px solid #cdcdcd;border-radius:8px;font:inherit;font-size:14px;padding:0 8px;background:#fff;color:var(--text)}
+  .group{font-size:12.5px;font-weight:700;background:var(--gray);padding:6px 14px}
+  /* result */
+  .result{position:sticky;top:16px;border:1px solid #cdcdcd;border-radius:14px;padding:18px}
+  .result h2{font-size:15px;margin:0 0 10px}
+  .lines{list-style:none;margin:0;padding:0;font-size:13.5px}
+  .lines li{display:flex;justify-content:space-between;gap:12px;padding:7px 0;border-top:1px dashed var(--line)}
+  .lines li:first-child{border-top:0}
+  .lines li span:last-child{white-space:nowrap;font-variant-numeric:tabular-nums}
+  .lines li.sub{color:var(--sub);font-size:12.5px}
+  .total{margin-top:12px;padding-top:12px;border-top:2px solid var(--text)}
+  .total .lb{font-size:13px;font-weight:700}
+  .total .v{font-size:28px;font-weight:700;color:var(--orange);line-height:1.25;font-variant-numeric:tabular-nums}
+  .total .v small{font-size:16px}
+  .warn{margin-top:10px;background:var(--orange-bg);border-radius:8px;padding:8px 10px;font-size:12.5px}
+  .note{color:var(--sub);font-size:12px;margin:10px 0 0}
+  footer{border-top:1px solid var(--line);margin-top:40px;padding:18px 0 30px;color:var(--sub);font-size:12px}
+  footer .wrap{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
+  footer img{height:34px}
+  /* price list dialog */
+  dialog{border:0;border-radius:16px;padding:0;width:min(920px,94vw);max-height:90vh;color:var(--text)}
+  dialog::backdrop{background:rgba(0,0,0,.45)}
+  .dl-head{display:flex;justify-content:space-between;align-items:center;padding:16px 20px;border-bottom:1px solid var(--line);position:sticky;top:0;background:#fff}
+  .dl-head h2{margin:0;font-size:18px}
+  .dl-body{padding:18px 20px 24px}
+  .dl-body h3{font-size:15px;margin:22px 0 8px}
+  .dl-body h3:first-child{margin-top:0}
+  .tbl-scroll{overflow-x:auto}
+  table{border-collapse:collapse;width:100%;font-size:13.5px}
+  th,td{border:1px solid var(--line);padding:9px 10px;text-align:center}
+  th{background:var(--gray)}
+  td.l,th.l{text-align:left}
+  td.r{text-align:right}
+  .col30{background:#fffbe6}
+  th.col30{background:var(--yellow);color:var(--orange)}
+  tr.std td{color:var(--orange);font-weight:700}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  @media (max-width:700px){.two{grid-template-columns:1fr}}
+  .dl-body ul{margin:0;padding-left:1.2em;font-size:13.5px}
+  .mbar{display:none}
+  @media (max-width:860px){
+    .result{position:static}
+    .mbar{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:5;background:#fff;border-top:1px solid #cdcdcd;
+      padding:10px 16px calc(10px + env(safe-area-inset-bottom));align-items:center;justify-content:space-between;gap:10px;box-shadow:0 -4px 12px rgba(0,0,0,.06)}
+    .mbar .v{font-weight:700;color:var(--orange);font-size:18px;line-height:1.2}
+    .mbar .lb{font-size:11px;color:var(--sub)}
+    body{padding-bottom:76px}
+  }
+  .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap head">
+    <div class="brand">
+      <img src="logo_medicri.png" alt="メディクリ Medical Creator">
+      <div class="t">動画編集 料金シミュレーター<small>見やすく、わかりやすく、伝わる動画へ。</small></div>
+    </div>
+    <button class="btn" id="openList" type="button">料金一覧を見る</button>
+  </div>
+</header>
+
+<main class="wrap">
+  <h1>料金のめやすを計算する</h1>
+  <p class="lead">元の動画の長さ、完成動画の長さ、プラン、オプションを選ぶと、料金のめやすを表示します。</p>
+
+  <div class="grid">
+    <div>
+      <section class="step">
+        <h2><span class="num">1</span>元の動画（撮影した素材）の長さ</h2>
+        <div class="row">
+          <div class="minutes">
+            <button type="button" id="rawMinus" aria-label="10分減らす">−</button>
+            <input id="raw" type="number" inputmode="numeric" min="1" max="600" value="60" aria-label="元の動画の長さ（分）">
+            <button type="button" id="rawPlus" aria-label="10分増やす">＋</button>
+          </div>
+          <span class="unit">分</span>
+        </div>
+        <div class="chips" style="margin-top:10px" id="rawChips"></div>
+        <p class="hint">複数のファイルがある場合は、合計の長さを入れてください。</p>
+      </section>
+
+      <section class="step">
+        <h2><span class="num">2</span>完成動画の長さ</h2>
+        <div class="chips" id="finChips" role="group" aria-label="完成動画の長さ"></div>
+        <p class="hint" id="capHint"></p>
+      </section>
+
+      <section class="step">
+        <h2><span class="num">3</span>プラン</h2>
+        <div class="plans" id="plans"></div>
+      </section>
+
+      <section class="step">
+        <h2><span class="num">4</span>オプション</h2>
+        <div class="opts" id="opts"></div>
+        <p class="hint">オプションは、各プランの標準サービスの範囲を超える作業に適用します。上位プランに含まれる作業を重ねてご請求することはありません。</p>
+      </section>
+    </div>
+
+    <aside class="result" id="result" aria-live="polite">
+      <h2>料金のめやす</h2>
+      <ul class="lines" id="lines"></ul>
+      <div class="total">
+        <div class="lb">合計（めやす）</div>
+        <div class="v" id="total"></div>
+      </div>
+      <div id="warns"></div>
+      <p class="note">表示金額は概算です。オプション料金は編集内容や作業量によって変わります。正式な料金は、ご依頼内容を確認したうえでお見積もりを提示します。撮影費用、交通費、特殊な有料素材の購入費用は別途となります。</p>
+      <button class="btn" type="button" id="openList2" style="width:100%;margin-top:12px">料金一覧を見る</button>
+    </aside>
+  </div>
+</main>
+
+<dialog id="listDlg" aria-labelledby="dlTitle">
+  <div class="dl-head">
+    <h2 id="dlTitle">料金一覧</h2>
+    <button class="btn" type="button" id="closeList">閉じる</button>
+  </div>
+  <div class="dl-body" id="listBody"></div>
+</dialog>
+
+<div class="mbar" aria-hidden="true">
+  <div><div class="lb">合計（めやす）</div><div class="v" id="mtotal"></div></div>
+  <a class="btn" href="#result">内訳を見る</a>
+</div>
+
+<footer>
+  <div class="wrap">
+    <span>メディクリ｜DimiX の医療・教育向け動画編集サービス</span>
+    <img src="logo_dimix.png" alt="DimiX">
+  </div>
+</footer>
+
+<script>
+/* ===== 料金データ（資料「メディクリ業者様用プレゼン資料_改訂版」と同じ値） ===== */
+const TIERS = [15, 30, 45, 60];
+const CAP_RATIO = 1.5;            // 元素材は完成動画の1.5倍まで基本料金に含む
+const OVER_UNIT_MIN = 30, OVER_UNIT_YEN = 5000; // 超過分 ¥5,000／30分〜
+const PLANS = [
+  {id:"light", name:"ライト", prices:[6000,10000,14000,18000],
+   items:["前後カット・動画の結合","音量・明るさ調整","タイトル挿入","修正対応1回"]},
+  {id:"standard", name:"スタンダード", prices:[20000,40000,50000,65000], recommend:true,
+   items:["ライトの全内容","詳細カット・ノイズ除去","要点テロップ（校正込み）","BGM・修正対応2回"]},
+  {id:"premium", name:"プレミアム", prices:[35000,60000,85000,110000],
+   items:["スタンダードの全内容","画像・簡易図解・資料の挿入","アニメーション・演出","修正対応3回"]},
+];
+/* type: perMin=完成動画1分あたり, qty=数量, flag=あり/なし, camera, rush, quote=個別見積もり
+   min/max: 単価の幅。open:true は「〜」（上限なし） */
+const OPTIONS = [
+  {group:"字幕・デザイン"},
+  {id:"fulltelop", name:"フルテロップ・全文字幕", type:"perMin", min:500, max:1000, label:"¥500〜1,000／完成動画1分"},
+  {id:"figure", name:"オリジナル図解・イラスト作成", type:"qty", unit:"枚", min:2000, max:5000, label:"¥2,000〜5,000／枚"},
+  {id:"slides", name:"PowerPointなどの資料追加挿入", type:"qty", unit:"枚", min:300, max:500, label:"¥300〜500／枚"},
+  {id:"thumb", name:"サムネイル作成", type:"qty", unit:"枚", min:3000, max:3000, label:"¥3,000／枚"},
+  {id:"narration", name:"AIナレーション", type:"flag", min:3000, max:10000, label:"¥3,000〜10,000"},
+  {id:"short", name:"ショート動画への再編集", type:"qty", unit:"本", min:5000, max:5000, open:true, label:"¥5,000／本〜"},
+  {id:"mosaic", name:"モザイク・個人情報保護処理", type:"flag", min:3000, max:3000, open:true, label:"¥3,000〜"},
+  {group:"編集・進行"},
+  {id:"camera", name:"複数カメラの編集", type:"camera", label:"2カメラ ¥5,000〜15,000／3カメラ以上 ¥10,000〜"},
+  {id:"revise", name:"規定回数を超える修正", type:"qty", unit:"回", min:3000, max:3000, open:true, label:"¥3,000／回〜"},
+  {id:"rush", name:"特急納品", type:"rush", label:"基本料金の30％増"},
+  {id:"shoot", name:"撮影サービス", type:"quote", label:"個別見積もり"},
+  {id:"anime", name:"高度なアニメーション制作", type:"quote", label:"個別見積もり"},
+  {id:"special", name:"その他特殊編集", type:"quote", label:"個別見積もり"},
+];
+
+const yen = v => "¥" + v.toLocaleString("ja-JP");
+const range = (a,b,open) => (a===b ? yen(a) : yen(a)+"〜"+b.toLocaleString("ja-JP")) + (open?"〜":"");
+const $ = id => document.getElementById(id);
+
+const state = {raw:60, fin:60, finTouched:false, plan:"standard", opt:{}};
+
+/* ---- step 1 ---- */
+const rawInput = $("raw");
+function setRaw(v){
+  v = Math.max(1, Math.min(600, Math.round(Number(v)||1)));
+  state.raw = v; rawInput.value = v;
+  if(!state.finTouched){ // 完成動画の長さを自動で合わせる（元の長さ以上の最小区分、上限は60分超）
+    state.fin = TIERS.find(t => t >= v) || 60;
+  }
+  render();
+}
+rawInput.addEventListener("input", () => { if(rawInput.value!=="") setRaw(rawInput.value); });
+rawInput.addEventListener("blur", () => setRaw(rawInput.value));
+$("rawMinus").onclick = () => setRaw(state.raw - 10);
+$("rawPlus").onclick = () => setRaw(state.raw + 10);
+[30,45,60,90,120].forEach(m=>{
+  const b=document.createElement("button"); b.type="button"; b.className="chip"; b.textContent=m+"分";
+  b.onclick=()=>setRaw(m); $("rawChips").appendChild(b);
+});
+
+/* ---- step 2 ---- */
+const finOpts = [...TIERS.map(t=>({v:t,l:"〜"+t+"分"})), {v:999,l:"60分を超える"}];
+finOpts.forEach(o=>{
+  const b=document.createElement("button"); b.type="button"; b.className="chip"; b.textContent=o.l; b.dataset.v=o.v;
+  b.onclick=()=>{ state.fin=o.v; state.finTouched=true; render(); };
+  $("finChips").appendChild(b);
+});
+
+/* ---- step 3 ---- */
+PLANS.forEach(p=>{
+  const l=document.createElement("label"); l.className="plan"+(p.recommend?" std":""); l.dataset.id=p.id;
+  l.innerHTML = (p.recommend?'<span class="badge">おすすめ</span>':'') +
+    `<input type="radio" name="plan" value="${p.id}"><div class="nm">${p.name}</div>
+     <div class="pr"><span class="pv"></span> <small class="pt"></small></div>
+     <ul>${p.items.map(i=>`<li>${i}</li>`).join("")}</ul>`;
+  l.querySelector("input").onchange=()=>{state.plan=p.id; render();};
+  $("plans").appendChild(l);
+});
+
+/* ---- step 4 ---- */
+OPTIONS.forEach(o=>{
+  if(o.group){ const g=document.createElement("div"); g.className="group"; g.textContent=o.group; $("opts").appendChild(g); return; }
+  const d=document.createElement("div"); d.className="opt";
+  const cid="o_"+o.id;
+  let right="";
+  if(o.type==="qty") right=`<div class="q"><input type="number" min="1" max="99" value="1" id="${cid}_n" aria-label="${o.name}の${o.unit}数" disabled><span>${o.unit}</span></div>`;
+  if(o.type==="camera") right=`<select id="${cid}_n" aria-label="カメラ台数" disabled><option value="2">2カメラ</option><option value="3">3カメラ以上</option></select>`;
+  d.innerHTML=`<label class="l" for="${cid}"><input type="checkbox" id="${cid}"><span><span class="nm">${o.name}</span><br><span class="pr">${o.label}</span></span></label>${right}`;
+  $("opts").appendChild(d);
+  const cb=d.querySelector("#"+cid), n=d.querySelector("#"+cid+"_n");
+  state.opt[o.id]={on:false,n:o.type==="camera"?2:1};
+  cb.onchange=()=>{ state.opt[o.id].on=cb.checked; if(n) n.disabled=!cb.checked; render(); };
+  if(n) n.addEventListener("input",()=>{ state.opt[o.id].n=Math.max(1,Math.min(99,Number(n.value)||1)); render(); });
+});
+
+/* ---- 計算 ---- */
+function calc(){
+  const plan=PLANS.find(p=>p.id===state.plan);
+  const lines=[], warns=[]; let lo=0, hi=0, open=false, quote=false;
+  const tierIdx=TIERS.indexOf(state.fin);
+  if(tierIdx<0){
+    quote=true;
+    lines.push({l:`${plan.name}（完成60分超）`, v:"個別見積もり"});
+    warns.push("完成動画が60分を超える場合は、個別にお見積もりします。");
+  }else{
+    const base=plan.prices[tierIdx];
+    lines.push({l:`${plan.name}プラン（完成${state.fin}分）`, v:yen(base)}); lo+=base; hi+=base;
+    // 元素材の超過
+    const cap=state.fin*CAP_RATIO, over=state.raw-cap;
+    if(over>0){
+      const units=Math.ceil(over/OVER_UNIT_MIN), v=units*OVER_UNIT_YEN;
+      lines.push({l:`元素材の超過分（${Math.ceil(over)}分超過）`, v:yen(v)+"〜"}); lo+=v; hi+=v; open=true;
+    }
+    if(state.raw < state.fin){
+      warns.push("元の動画より完成動画が長くなっています。長さをご確認ください。");
+    }
+    // 特急（基本料金の30%）
+    if(state.opt.rush.on){ const v=Math.round(base*0.3); lines.push({l:"特急納品（基本料金の30％）", v:yen(v)}); lo+=v; hi+=v; }
+  }
+  const finMin = tierIdx<0 ? null : state.fin;
+  OPTIONS.forEach(o=>{
+    if(o.group||o.type==="rush") return;
+    const s=state.opt[o.id]; if(!s.on) return;
+    if(o.type==="quote"){ quote=true; lines.push({l:o.name, v:"個別見積もり"}); return; }
+    let a,b,lab=o.name,op=!!o.open;
+    if(o.type==="perMin"){
+      if(finMin===null){ quote=true; lines.push({l:o.name, v:"個別見積もり"}); return; }
+      a=o.min*finMin; b=o.max*finMin; lab+=`（${finMin}分）`;
+    }else if(o.type==="qty"){ a=o.min*s.n; b=o.max*s.n; lab+=`（${s.n}${o.unit}）`; }
+    else if(o.type==="camera"){ if(s.n==2){a=5000;b=15000;lab="2カメラ編集";}else{a=10000;b=10000;op=true;lab="3カメラ以上の編集";} }
+    else { a=o.min; b=o.max; }
+    lo+=a; hi+=b; if(op) open=true;
+    lines.push({l:lab, v:range(a,b,op)});
+  });
+  if(state.plan==="premium" && (state.opt.figure.on||state.opt.slides.on))
+    warns.push("プレミアムには簡易図解・提供資料の挿入が含まれます。オプションは、それを超える追加分のめやすです。");
+  if(quote) warns.push("「個別見積もり」の項目は合計に含まれていません。");
+  return {lines,warns,lo,hi,open,quote};
+}
+
+/* ---- 表示 ---- */
+function render(){
+  rawInput.value=state.raw;
+  document.querySelectorAll("#finChips .chip").forEach(b=>b.setAttribute("aria-pressed", String(Number(b.dataset.v)===state.fin)));
+  $("capHint").textContent = state.fin===999
+    ? "60分を超える完成動画は個別見積もりです。"
+    : `元の動画は、完成動画の1.5倍（${state.fin*CAP_RATIO}分）まで基本料金に含まれます。超えた分は30分ごとに¥5,000〜です。`;
+  const ti=TIERS.indexOf(state.fin);
+  document.querySelectorAll("label.plan").forEach(l=>{
+    const p=PLANS.find(x=>x.id===l.dataset.id);
+    l.classList.toggle("sel", p.id===state.plan); l.querySelector("input").checked = p.id===state.plan;
+    l.querySelector(".pv").textContent = ti<0 ? "個別見積もり" : yen(p.prices[ti]);
+    l.querySelector(".pt").textContent = ti<0 ? "" : `／完成${state.fin}分`;
+  });
+  const r=calc();
+  $("lines").innerHTML = r.lines.map(x=>`<li><span>${x.l}</span><span>${x.v}</span></li>`).join("");
+  let t;
+  if(r.lo===0 && r.quote) t="個別見積もり";
+  else t = (r.lo===r.hi ? yen(r.lo) : yen(r.lo)+"<small> 〜 </small>"+yen(r.hi)) + (r.open?"<small>〜</small>":"");
+  $("total").innerHTML=t; $("mtotal").innerHTML=t;
+  $("warns").innerHTML=r.warns.map(w=>`<div class="warn">${w}</div>`).join("");
+}
+
+/* ---- 料金一覧 ---- */
+function buildList(){
+  const head = `<tr><th class="l">プラン</th><th>内容</th>${TIERS.map(t=>`<th class="${t===30?'col30':''}">${t}分</th>`).join("")}</tr>`;
+  const adds = {light:"基本料金", standard:"＋カット・テロップ", premium:"＋図解・演出"};
+  const body = PLANS.map(p=>`<tr class="${p.recommend?'std':''}"><td class="l">${p.name}${p.recommend?'（おすすめ）':''}</td><td>${adds[p.id]}</td>${p.prices.map((v,i)=>`<td class="${TIERS[i]===30?'col30':''}">${yen(v)}</td>`).join("")}</tr>`).join("");
+  const optRows = grp => OPTIONS.slice(grp[0],grp[1]).filter(o=>!o.group).map(o=>{
+    let lab=o.label;
+    if(o.type==="camera") return `<tr><td class="l">2カメラ編集</td><td class="r">¥5,000〜15,000</td></tr><tr><td class="l">3カメラ以上の編集</td><td class="r">¥10,000〜</td></tr>`;
+    return `<tr><td class="l">${o.name}</td><td class="r">${lab}</td></tr>`;
+  }).join("");
+  const gi = OPTIONS.findIndex((o,i)=>i>0&&o.group);
+  $("listBody").innerHTML = `
+    <h3>基本料金（完成動画の長さ別）</h3>
+    <div class="tbl-scroll"><table>${head}${body}
+      <tr><td class="l" colspan="2">撮影を含む動画制作</td><td colspan="4">個別見積もり</td></tr>
+      <tr><td class="l" colspan="2">60分を超える動画・特殊な編集</td><td colspan="4">個別見積もり</td></tr></table></div>
+    <h3>オプション（めやす）</h3>
+    <div class="two">
+      <div class="tbl-scroll"><table><tr><th colspan="2">字幕・デザイン</th></tr>${optRows([1,gi])}</table></div>
+      <div class="tbl-scroll"><table><tr><th colspan="2">編集・進行</th></tr>${optRows([gi+1,OPTIONS.length])}
+        <tr><td class="l">元素材の超過分（完成動画の1.5倍超）</td><td class="r">¥5,000／30分〜</td></tr></table></div>
+    </div>
+    <h3>料金適用条件</h3>
+    <ul>
+      <li>基本料金は完成動画の長さを基準とします。</li>
+      <li>元の動画（素材）は、完成動画の1.5倍の長さまで基本料金に含みます。超えた時間は30分ごとに¥5,000〜となります（例：完成30分・素材70分 → 超過25分 → ¥5,000）。</li>
+      <li>撮影済みの動画素材をご提供いただくことを前提とします。ファイル数やカメラ台数が多い場合は追加料金が発生することがあります。</li>
+      <li>フルテロップ、複雑な図解やアニメーションは別途となります。規定回数を超える修正には追加料金が発生します。</li>
+      <li>撮影費用、交通費、特殊な有料素材の購入費用は別途となります。納期は動画の長さや編集内容によって異なります。</li>
+      <li>オプション料金はめやすです。正式な料金は、ご依頼内容を確認したうえでお見積もりを提示します。</li>
+    </ul>`;
+}
+buildList();
+const dlg=$("listDlg");
+function openList(){ if(typeof dlg.showModal==="function") dlg.showModal(); else dlg.setAttribute("open",""); if(location.hash!=="#prices") history.replaceState(null,"","#prices"); }
+function closeList(){ dlg.close ? dlg.close() : dlg.removeAttribute("open"); }
+dlg.addEventListener("close",()=>{ if(location.hash==="#prices") history.replaceState(null,"",location.pathname+location.search); });
+dlg.addEventListener("click",e=>{ if(e.target===dlg) closeList(); });
+$("openList").onclick=openList; $("openList2").onclick=openList; $("closeList").onclick=closeList;
+
+setRaw(60);
+if(location.hash==="#prices") openList();
+</script>
+</body>
+</html>
